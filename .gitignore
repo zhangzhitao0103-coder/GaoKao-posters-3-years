@@ -1,0 +1,10 @@
+2024/
+2025/
+2026/
+node_modules/
+.env
+.env.*
+!.env.r2.example
+outputs/
+*.zip
+*.7z

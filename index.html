@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>有道领世高考喜报素材库</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23173B6D'/%3E%3Cpath d='M8 17h16v8H8zM10 8h12v7H10z' fill='%23FF9F1C'/%3E%3C/svg%3E" />
+    <link rel="stylesheet" href="./styles.css" />
+    <script>
+      !function(t,e){var o,n,p,r;e.__SV||(window.posthog&&window.posthog.__loaded)||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="capture identify reset register register_once unregister opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+
+      const POSTHOG_PROJECT_TOKEN = "POSTHOG_PROJECT_TOKEN_PLACEHOLDER";
+      const POSTHOG_API_HOST = "POSTHOG_API_HOST_PLACEHOLDER";
+      if (
+        POSTHOG_PROJECT_TOKEN !== "POSTHOG_PROJECT_TOKEN_PLACEHOLDER" &&
+        POSTHOG_API_HOST !== "POSTHOG_API_HOST_PLACEHOLDER"
+      ) {
+        posthog.init(POSTHOG_PROJECT_TOKEN, {
+          api_host: POSTHOG_API_HOST,
+          capture_pageview: true,
+          autocapture: true,
+          person_profiles: "identified_only"
+        });
+      }
+    </script>
+  </head>
+  <body>
+    <div class="page-shell">
+    <header class="topbar">
+      <div class="topbar__inner">
+        <div class="title-row">
+          <div>
+            <h1>有道领世高考喜报素材库</h1>
+            <p>按省份、学科快速筛选高考喜报素材，点击图片可预览，点击复制可直接复制图片。</p>
+          </div>
+          <div class="stats-pills">
+            <span class="stats-pill"><strong id="totalYears">0</strong><em>年份</em></span>
+            <span class="stats-pill"><strong id="totalImages">0</strong><em>张素材</em></span>
+            <span class="stats-pill"><strong id="totalCategories">0</strong><em>类素材</em></span>
+          </div>
+        </div>
+
+        <div class="filter-panel">
+          <div class="filter-line">
+            <span class="filter-label">年份</span>
+            <select id="yearSelect" class="select-control year-select" aria-label="年份筛选">
+              <option value="全部">全部</option>
+              <option value="2025">2025</option>
+            </select>
+            <span class="filter-label">省份</span>
+            <select id="provinceSelect" class="select-control province-select" aria-label="省份筛选">
+              <option value="全部">全部省份</option>
+            </select>
+            <button id="resetButton" class="ghost-button" type="button">重置</button>
+          </div>
+
+          <div class="filter-line">
+            <span class="filter-label">学科</span>
+            <div id="subjectButtons" class="chip-group"></div>
+          </div>
+
+          <div id="filterSummary" class="filter-summary">当前筛选：2025｜全部省份｜全部学科｜共 0 张</div>
+        </div>
+      </div>
+    </header>
+
+    <main class="dashboard">
+      <section class="year-head">
+        <div>
+          <h2 id="yearTitle">2025 高考喜报素材</h2>
+          <p id="yearSubtitle">共 0 张素材，当前筛选 0 张</p>
+        </div>
+      </section>
+
+      <section class="board-grid" aria-label="素材看板">
+        <div class="board-column board-column--left">
+          <div id="section-top-university"></div>
+          <div id="section-ultra-high-score"></div>
+        </div>
+        <div class="board-column board-column--center">
+          <div id="section-single-subject-high-score"></div>
+          <div id="section-high-score-student"></div>
+          <div id="section-score-improvement"></div>
+        </div>
+        <div class="board-column board-column--right">
+          <div id="section-prediction-feedback"></div>
+        </div>
+      </section>
+    </main>
+    </div>
+
+    <div id="viewAllModal" class="modal" hidden>
+      <div class="modal__overlay" data-close-modal></div>
+      <section class="modal__panel" role="dialog" aria-modal="true" aria-labelledby="viewAllTitle">
+        <div class="modal__header">
+          <div>
+            <h3 id="viewAllTitle">2025｜提分学员｜共 0 张</h3>
+            <p id="viewAllSubtitle">当前筛选下的全部素材</p>
+          </div>
+          <button class="icon-button" type="button" data-close-modal aria-label="关闭">×</button>
+        </div>
+        <div id="viewAllGrid" class="modal-grid"></div>
+        <div class="modal__footer">
+          <button id="viewAllPrev" class="ghost-button" type="button">上一页</button>
+          <span id="viewAllPageIndicator" class="modal-page-indicator">1 / 1</span>
+          <button id="viewAllNext" class="primary-button" type="button">下一页</button>
+          <button class="ghost-button" type="button" data-close-modal>关闭</button>
+        </div>
+      </section>
+    </div>
+
+    <div id="lightbox" class="lightbox" hidden>
+      <div class="lightbox__backdrop"></div>
+      <button id="lightboxCloseTop" class="lightbox__close" type="button" aria-label="关闭">×</button>
+      <button id="lightboxPrev" class="lightbox__nav lightbox__nav--prev" type="button" aria-label="上一张">‹</button>
+      <figure class="lightbox__content">
+        <img id="lightboxImage" alt="" />
+        <figcaption class="lightbox__caption">
+          <div class="lightbox__meta">
+            <strong id="lightboxTitle"></strong>
+            <span id="lightboxFile"></span>
+            <span id="lightboxTags"></span>
+          </div>
+          <div class="lightbox__actions">
+            <button id="lightboxCopy" class="primary-button" type="button">复制图片</button>
+            <a id="lightboxDownload" class="ghost-button" download>下载原图</a>
+            <button id="lightboxCopyName" class="ghost-button" type="button">复制文件名</button>
+            <button id="lightboxCloseBottom" class="ghost-button" type="button">关闭</button>
+          </div>
+        </figcaption>
+      </figure>
+      <button id="lightboxNext" class="lightbox__nav lightbox__nav--next" type="button" aria-label="下一张">›</button>
+    </div>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <script src="./data.js"></script>
+    <script src="./app.js"></script>
+  </body>
+</html>
