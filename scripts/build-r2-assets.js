@@ -5,6 +5,7 @@ const sharp = require("sharp");
 
 const ROOT_DIR = path.resolve(__dirname, "..");
 const DATA_FILE = path.join(ROOT_DIR, "data.js");
+const ENV_FILE = path.join(ROOT_DIR, ".env.r2");
 const OUTPUT_DIR = path.join(ROOT_DIR, "outputs", "r2-assets");
 const THUMBS_DIR = path.join(OUTPUT_DIR, "thumbs");
 const PREVIEWS_DIR = path.join(OUTPUT_DIR, "previews");
@@ -12,9 +13,24 @@ const ORIGINALS_DIR = path.join(OUTPUT_DIR, "originals");
 const MANIFEST_FILE = path.join(OUTPUT_DIR, "upload-manifest.json");
 const R2_DATA_FILE = path.join(OUTPUT_DIR, "data.r2.js");
 
-const PUBLIC_BASE_URL = (process.env.R2_PUBLIC_BASE_URL || "https://YOUR_PUBLIC_R2_DOMAIN").replace(/\/+$/, "");
+const LOCAL_ENV = loadEnv(ENV_FILE);
+const PUBLIC_BASE_URL = (process.env.R2_PUBLIC_BASE_URL || LOCAL_ENV.R2_PUBLIC_BASE_URL || "https://YOUR_PUBLIC_R2_DOMAIN").replace(/\/+$/, "");
 const IMAGE_EXTENSIONS = new Set([".jpg", ".jpeg", ".png", ".webp"]);
 const ASSET_LIMIT = Number.parseInt(process.env.R2_ASSET_LIMIT || "", 10);
+
+function loadEnv(filePath) {
+  if (!fs.existsSync(filePath)) return {};
+
+  const values = {};
+  for (const line of fs.readFileSync(filePath, "utf8").split(/\r?\n/)) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith("#")) continue;
+    const match = trimmed.match(/^([^=]+)=(.*)$/);
+    if (!match) continue;
+    values[match[1].trim()] = match[2].trim().replace(/^["']|["']$/g, "");
+  }
+  return values;
+}
 
 function ensureDir(dir) {
   fs.mkdirSync(dir, { recursive: true });
