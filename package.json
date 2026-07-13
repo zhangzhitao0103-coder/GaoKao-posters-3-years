@@ -3,7 +3,7 @@
     "scan": "node scripts/scan-materials.js",
     "dev": "python -m http.server 8088",
     "build": "node scripts/build-site.js",
-    "deploy": "npm run build && wrangler deploy",
+    "deploy": "npm run build && npx wrangler deploy",
     "build:r2-assets": "node scripts/build-r2-assets.js",
     "upload:r2-assets": "node scripts/upload-r2-assets.js"
   },
