@@ -45,11 +45,11 @@ const EXAM_PROVINCE_GROUPS = [
     provinces: ["山西", "宁夏", "青海", "陕西"],
   },
   {
-    aliases: ["黑吉辽蒙", "辽宁卷"],
+    aliases: ["黑吉辽蒙", "黑吉辽", "辽宁卷"],
     provinces: ["内蒙古", "吉林", "黑龙江", "辽宁"],
   },
   {
-    aliases: ["老高考"],
+    aliases: ["老高考", "新课标"],
     provinces: ["新疆", "西藏"],
   },
 ];
@@ -260,7 +260,10 @@ function renderFilters() {
   const currentYearItems = getBaseItems();
   const sortedProvinces = uniqueSorted(currentYearItems.map((item) => item.province))
     .sort((a, b) => PROVINCE_COLLATOR.compare(a, b));
-  const hasUnknown = currentYearItems.some((item) => !item.province);
+  const hasUnknown = currentYearItems.some((item) => {
+    if (item.category === "押题学员反馈") return !hasPredictionProvinceSignal(item);
+    return !item.province;
+  });
   const provinceOptions = [ALL, ...sortedProvinces, ...(hasUnknown ? [UNKNOWN_PROVINCE] : [])];
   elements.provinceSelect.innerHTML = provinceOptions.map((province) => {
     const label = province === ALL ? "全部省份" : province;

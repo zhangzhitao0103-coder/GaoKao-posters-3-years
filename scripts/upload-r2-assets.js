@@ -4,7 +4,9 @@ const { S3Client, HeadObjectCommand, PutObjectCommand } = require("@aws-sdk/clie
 
 const ROOT_DIR = path.resolve(__dirname, "..");
 const ENV_FILE = path.join(ROOT_DIR, ".env.r2");
-const MANIFEST_FILE = path.join(ROOT_DIR, "outputs", "r2-assets", "upload-manifest.json");
+const MANIFEST_FILE = process.env.R2_UPLOAD_MANIFEST
+  ? path.resolve(ROOT_DIR, process.env.R2_UPLOAD_MANIFEST)
+  : path.join(ROOT_DIR, "outputs", "r2-assets", "upload-manifest.json");
 const FAILED_UPLOADS_FILE = path.join(ROOT_DIR, "outputs", "r2-assets", "failed-uploads.json");
 const UPLOAD_CONCURRENCY = Number.parseInt(process.env.R2_UPLOAD_CONCURRENCY || "4", 10);
 const START_INDEX = Number.parseInt(process.env.R2_UPLOAD_START_INDEX || "0", 10);
