@@ -31,6 +31,28 @@ const SECTION_CONFIGS = [
   { category: "押题学员反馈", key: "prediction-feedback", elementId: "section-prediction-feedback", pageSize: 8, gridClass: "grid-2" },
 ];
 const SCHOOL_PRIORITY = ["清华大学", "北京大学", "复旦大学", "上海交通大学", "浙江大学", "中国人民大学", "香港大学"];
+const EXAM_PROVINCE_GROUPS = [
+  {
+    aliases: ["新高考一卷", "新高考1卷", "新高考Ⅰ卷", "新高考I卷", "新一卷"],
+    provinces: ["山东", "浙江", "江苏", "广东", "湖南", "湖北", "福建", "河北", "安徽", "江西", "河南"],
+  },
+  {
+    aliases: ["新高考二卷", "新高考2卷", "新高考Ⅱ卷", "新高考II卷", "新二卷"],
+    provinces: ["海南", "重庆", "辽宁", "黑龙江", "吉林", "甘肃", "贵州", "广西", "云南", "山西", "四川", "陕西", "内蒙古", "青海", "宁夏"],
+  },
+  {
+    aliases: ["陕晋青宁", "陕西卷"],
+    provinces: ["山西", "宁夏", "青海", "陕西"],
+  },
+  {
+    aliases: ["黑吉辽蒙", "辽宁卷"],
+    provinces: ["内蒙古", "吉林", "黑龙江", "辽宁"],
+  },
+  {
+    aliases: ["老高考"],
+    provinces: ["新疆", "西藏"],
+  },
+];
 
 const state = {
   year: CURRENT_YEAR,
@@ -93,6 +115,32 @@ function uniqueSorted(values) {
   return [...new Set(values.filter(Boolean))].sort((a, b) => a.localeCompare(b, "zh-Hans-CN"));
 }
 
+function predictionText(item) {
+  return [item.rawName, item.fileName, item.sourcePath, item.title].filter(Boolean).join(" ");
+}
+
+function containsProvinceName(item, province) {
+  return predictionText(item).includes(province);
+}
+
+function matchingExamGroups(item) {
+  const text = predictionText(item);
+  return EXAM_PROVINCE_GROUPS.filter((group) => group.aliases.some((alias) => text.includes(alias)));
+}
+
+function hasPredictionProvinceSignal(item) {
+  return Boolean(item.province) || containsProvinceName(item, "全国") || matchingExamGroups(item).length > 0
+    || EXAM_PROVINCE_GROUPS.some((group) => group.provinces.some((province) => containsProvinceName(item, province)));
+}
+
+function predictionProvinceMatchRank(item, province) {
+  if (item.category !== "押题学员反馈" || province === ALL) return 0;
+  if (province === UNKNOWN_PROVINCE) return hasPredictionProvinceSignal(item) ? -1 : 0;
+  if (item.province === province || containsProvinceName(item, province)) return 0;
+  if (matchingExamGroups(item).some((group) => group.provinces.includes(province))) return 1;
+  return -1;
+}
+
 function imageProperties(item, source) {
   return {
     image_name: item.fileName,
@@ -132,8 +180,13 @@ function matchesSearch(item) {
 function matchesFilters(item, section) {
   if (item.category !== section.category) return false;
   if (state.year !== ALL && item.year !== state.year) return false;
-  if (state.province === UNKNOWN_PROVINCE && item.province) return false;
-  if (state.province !== ALL && state.province !== UNKNOWN_PROVINCE && item.province !== state.province) return false;
+  if (item.category === "押题学员反馈") {
+    const provinceRank = predictionProvinceMatchRank(item, state.province);
+    if (state.province !== ALL && provinceRank < 0) return false;
+  } else {
+    if (state.province === UNKNOWN_PROVINCE && item.province) return false;
+    if (state.province !== ALL && state.province !== UNKNOWN_PROVINCE && item.province !== state.province) return false;
+  }
   if (state.subject !== ALL && item.subject && item.subject !== state.subject) return false;
   if (state.subject !== ALL && !item.subject && !["顶尖名校", "超高分喜报"].includes(item.category)) return false;
   return matchesSearch(item);
@@ -156,7 +209,10 @@ function sortItems(items, category) {
     if (category === "高分学员") return (b.totalScore || 0) - (a.totalScore || 0) || (b.score || 0) - (a.score || 0) || compareByFileName(a, b);
     if (category === "提分学员") return (b.improvementScore || 0) - (a.improvementScore || 0) || compareByFileName(a, b);
     if (category === "押题学员反馈") {
-      return (a.subject || "").localeCompare(b.subject || "", "zh-Hans-CN")
+      const provinceRankA = predictionProvinceMatchRank(a, state.province);
+      const provinceRankB = predictionProvinceMatchRank(b, state.province);
+      return provinceRankA - provinceRankB
+        || (a.subject || "").localeCompare(b.subject || "", "zh-Hans-CN")
         || (a.province || "").localeCompare(b.province || "", "zh-Hans-CN")
         || (a.feedbackIndex || 0) - (b.feedbackIndex || 0)
         || compareByFileName(a, b);

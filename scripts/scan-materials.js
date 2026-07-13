@@ -178,6 +178,22 @@ function feedbackIndex(rawName) {
   return match ? Number.parseInt(match[1], 10) : null;
 }
 
+function buildPredictionFeedbackTitle(item) {
+  const parts = item.rawName
+    .replace(/[-－—]+/g, "_")
+    .split("_")
+    .map(cleanSegment)
+    .filter(Boolean);
+  const withoutTrailingIndex = parts.length > 1 && /^\d+$/.test(parts[parts.length - 1])
+    ? parts.slice(0, -1)
+    : parts;
+  const normalized = withoutTrailingIndex.map((part, index) => {
+    if (index === 0 && /^20\d{2}$/.test(part)) return part.slice(2);
+    return part;
+  });
+  return normalized.join("｜") || item.rawName;
+}
+
 function buildTitle(item) {
   if (item.category === "单科高分") {
     const name = item.studentName || item.province || item.subject || item.rawName;
@@ -198,7 +214,7 @@ function buildTitle(item) {
     return [item.province, clean].filter(Boolean).join("｜");
   }
   if (item.category === "押题学员反馈") {
-    return [item.province, `${item.subject || ""}押题反馈${item.feedbackIndex || ""}`].filter(Boolean).join("｜");
+    return buildPredictionFeedbackTitle(item);
   }
   return item.rawName;
 }
