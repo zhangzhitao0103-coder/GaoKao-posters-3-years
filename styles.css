@@ -1143,6 +1143,15 @@ body::before {
   padding: 18px 18px 14px;
   border-bottom: 1px solid rgba(228, 234, 243, 0.78);
   background: linear-gradient(180deg, #fbfdff, #fff);
+  flex-wrap: wrap;
+  align-items: flex-start;
+  row-gap: 12px;
+  column-gap: 16px;
+}
+
+.section-card__head > div:first-child {
+  flex: 1 1 180px;
+  min-width: 0;
 }
 
 .section-title {
@@ -1152,6 +1161,13 @@ body::before {
   color: var(--primary);
   font-size: 19px;
   font-weight: 900;
+  flex-wrap: nowrap;
+  align-items: center;
+}
+
+.section-title strong {
+  white-space: nowrap;
+  line-height: 1.18;
 }
 
 .section-title::before {
@@ -1186,6 +1202,7 @@ body::before {
   height: 22px;
   display: inline-flex;
   align-items: center;
+  flex: 0 0 auto;
   padding: 0 8px;
   border-radius: 999px;
   background: #f3f7fc;
@@ -1194,6 +1211,8 @@ body::before {
 }
 
 .section-actions {
+  flex: 0 0 auto;
+  margin-left: auto;
   gap: 8px;
 }
 
@@ -1374,9 +1393,9 @@ body::before {
 .modal__overlay,
 .lightbox__backdrop {
   background:
-    linear-gradient(135deg, rgba(8, 18, 35, 0.88), rgba(17, 48, 87, 0.78)),
-    rgba(8, 18, 35, 0.8);
-  backdrop-filter: blur(6px);
+    linear-gradient(135deg, rgba(238, 245, 255, 0.92), rgba(248, 251, 255, 0.86)),
+    rgba(246, 248, 252, 0.88);
+  backdrop-filter: blur(8px);
 }
 
 .modal__panel {
@@ -1414,9 +1433,9 @@ body::before {
 }
 
 .lightbox__content img {
-  border: 1px solid rgba(255, 255, 255, 0.28);
+  border: 1px solid rgba(255, 255, 255, 0.86);
   border-radius: 16px;
-  box-shadow: 0 28px 90px rgba(0, 0, 0, 0.38);
+  box-shadow: 0 24px 70px rgba(22, 59, 109, 0.22);
 }
 
 .lightbox__caption {
@@ -1429,6 +1448,9 @@ body::before {
 
 .lightbox__nav,
 .lightbox__close {
+  color: var(--primary);
+  border-color: rgba(181, 204, 233, 0.92);
+  background: rgba(255, 255, 255, 0.76);
   border-radius: 14px;
   backdrop-filter: blur(10px);
   transition: background var(--ease), transform var(--ease), border-color var(--ease);
@@ -1437,8 +1459,8 @@ body::before {
 .lightbox__nav:hover,
 .lightbox__close:hover {
   transform: translateY(-1px);
-  border-color: rgba(255, 255, 255, 0.64);
-  background: rgba(255, 255, 255, 0.22);
+  border-color: rgba(47, 128, 237, 0.42);
+  background: rgba(255, 255, 255, 0.96);
 }
 
 .toast {

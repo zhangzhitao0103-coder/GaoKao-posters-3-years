@@ -344,7 +344,7 @@ function renderSection(section) {
   card.innerHTML = `
     <div class="section-card__head">
       <div>
-        <div class="section-title">${section.category}<span>共 ${items.length} 张</span></div>
+        <div class="section-title"><strong>${section.category}</strong><span>共 ${items.length} 张</span></div>
       </div>
       <div class="section-actions">
         <button class="mini-button" type="button" data-page="prev" ${pageIndex <= 0 ? "disabled" : ""}>‹</button>
