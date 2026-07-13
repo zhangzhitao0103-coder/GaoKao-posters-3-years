@@ -52,6 +52,14 @@ const EXAM_PROVINCE_GROUPS = [
     aliases: ["老高考", "新课标"],
     provinces: ["新疆", "西藏"],
   },
+  {
+    aliases: ["西北卷"],
+    provinces: ["陕西", "山西", "青海", "宁夏"],
+  },
+  {
+    aliases: ["全国甲卷", "全国甲"],
+    provinces: ["新疆", "西藏"],
+  },
 ];
 
 const state = {
@@ -293,12 +301,18 @@ function createMaterialCard(item, source, sectionItems) {
   const card = document.createElement("article");
   card.className = "material-card";
   card.tabIndex = 0;
+  const badges = [item.year, item.province || item.subject, item.category].filter(Boolean).slice(0, 3);
+  const meta = [item.year, item.category, item.province || UNKNOWN_PROVINCE, item.subject].filter(Boolean).join("｜");
   card.innerHTML = `
     <div class="thumb-frame">
       <img src="${item.thumbUrl}" alt="${escapeHtml(item.title)}" loading="lazy" decoding="async" />
+      <div class="card-badges">${badges.map((badge) => `<span>${escapeHtml(badge)}</span>`).join("")}</div>
     </div>
     <div class="card-footer">
-      <div class="card-title" title="${escapeHtml(item.title)}">${escapeHtml(item.title)}</div>
+      <div class="card-text">
+        <div class="card-title" title="${escapeHtml(item.title)}">${escapeHtml(item.title)}</div>
+        <div class="card-meta">${escapeHtml(meta)}</div>
+      </div>
       <button class="copy-button" type="button" aria-label="复制图片"></button>
     </div>
   `;
