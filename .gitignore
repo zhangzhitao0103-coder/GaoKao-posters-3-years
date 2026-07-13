@@ -6,5 +6,6 @@ node_modules/
 .env.*
 !.env.r2.example
 outputs/
+dist/
 *.zip
 *.7z
