@@ -20,6 +20,7 @@ const AVAILABLE_YEARS = [...new Set(MATERIALS.map((item) => item.year).filter(Bo
 const CURRENT_YEAR = AVAILABLE_YEARS[0] || "2025";
 const ALL = "全部";
 const UNKNOWN_PROVINCE = "未知省份";
+let availableProvinceOptions = [ALL];
 const SUBJECTS = ["全部", "语文", "数学", "英语", "物理", "化学", "生物", "政治", "历史", "地理"];
 const PROVINCE_COLLATOR = new Intl.Collator("zh-Hans-CN-u-co-pinyin", { numeric: true });
 const SECTION_CONFIGS = [
@@ -87,6 +88,7 @@ const elements = {
   resetButton: document.querySelector("#resetButton"),
   yearSelect: document.querySelector("#yearSelect"),
   provinceSelect: document.querySelector("#provinceSelect"),
+  provinceOptions: document.querySelector("#provinceOptions"),
   subjectButtons: document.querySelector("#subjectButtons"),
   filterSummary: document.querySelector("#filterSummary"),
   yearTitle: document.querySelector("#yearTitle"),
@@ -193,7 +195,8 @@ function matchesFilters(item, section) {
     if (state.province !== ALL && provinceRank < 0) return false;
   } else {
     if (state.province === UNKNOWN_PROVINCE && item.province) return false;
-    if (state.province !== ALL && state.province !== UNKNOWN_PROVINCE && item.province !== state.province) return false;
+    if (state.province !== ALL && state.province !== UNKNOWN_PROVINCE
+      && !String(item.province || "").includes(state.province)) return false;
   }
   if (state.subject !== ALL && item.subject && item.subject !== state.subject) return false;
   if (state.subject !== ALL && !item.subject && !["顶尖名校", "超高分喜报"].includes(item.category)) return false;
@@ -272,12 +275,12 @@ function renderFilters() {
     if (item.category === "押题学员反馈") return !hasPredictionProvinceSignal(item);
     return !item.province;
   });
-  const provinceOptions = [ALL, ...sortedProvinces, ...(hasUnknown ? [UNKNOWN_PROVINCE] : [])];
-  elements.provinceSelect.innerHTML = provinceOptions.map((province) => {
+  availableProvinceOptions = [ALL, ...sortedProvinces, ...(hasUnknown ? [UNKNOWN_PROVINCE] : [])];
+  elements.provinceOptions.innerHTML = availableProvinceOptions.map((province) => {
     const label = province === ALL ? "全部省份" : province;
-    return `<option value="${province}">${label}</option>`;
+    return `<option value="${escapeHtml(label)}"></option>`;
   }).join("");
-  elements.provinceSelect.value = state.province;
+  elements.provinceSelect.value = state.province === ALL ? "全部省份" : state.province;
 
   elements.subjectButtons.textContent = "";
   SUBJECTS.forEach((subject) => {
@@ -385,13 +388,23 @@ function renderAll() {
   if (!elements.viewAllModal.hidden && state.viewAll.category) renderViewAllContent();
 }
 
+function normalizeProvinceInput(value) {
+  const input = String(value || "").trim();
+  if (!input || input === ALL || input === "全部省份") return ALL;
+  if (availableProvinceOptions.includes(input)) return input;
+
+  const withoutSuffix = input.replace(/(?:壮族|回族|维吾尔)?自治区$|特别行政区$|省$|市$/, "");
+  return availableProvinceOptions.includes(withoutSuffix) ? withoutSuffix : input;
+}
+
 function selectProvince(province) {
-  state.province = province;
+  const normalizedProvince = normalizeProvinceInput(province);
+  state.province = normalizedProvince;
   resetPages();
   renderAll();
   const resultCount = getAllFilteredItems().length;
-  trackEvent("filter_changed", filterEventProperties("province", province, resultCount));
-  trackEvent("province_selected", filterEventProperties("province", province, resultCount));
+  trackEvent("filter_changed", filterEventProperties("province", normalizedProvince, resultCount));
+  trackEvent("province_selected", filterEventProperties("province", normalizedProvince, resultCount));
 }
 
 function selectYear(year) {
@@ -617,11 +630,34 @@ function bindEvents() {
     trackEvent("reset_clicked", previous);
   });
   elements.provinceSelect.addEventListener("change", (event) => selectProvince(event.target.value));
+  elements.provinceSelect.addEventListener("keydown", (event) => {
+    if (event.key !== "Enter") return;
+    event.preventDefault();
+    selectProvince(event.currentTarget.value);
+    event.currentTarget.blur();
+  });
+  elements.provinceSelect.addEventListener("focus", (event) => {
+    if (state.province === ALL) event.currentTarget.value = "";
+  });
+  elements.provinceSelect.addEventListener("blur", (event) => {
+    if (state.province === ALL && !event.currentTarget.value.trim()) {
+      event.currentTarget.value = "全部省份";
+    }
+  });
   elements.yearSelect.addEventListener("change", (event) => selectYear(event.target.value));
   elements.viewAllPrev.addEventListener("click", () => changeViewAllPage(-1));
   elements.viewAllNext.addEventListener("click", () => changeViewAllPage(1));
+  elements.viewAllModal.querySelector(".modal__overlay").addEventListener("click", closeViewAll);
   elements.viewAllModal.addEventListener("click", (event) => {
-    if (event.target.matches("[data-close-modal]")) closeViewAll();
+    if (event.target.closest("[data-close-modal]")) {
+      closeViewAll();
+      return;
+    }
+    if (!event.target.closest(".material-card, button, a")) closeViewAll();
+  });
+  elements.lightbox.querySelector(".lightbox__backdrop").addEventListener("click", closeLightbox);
+  elements.lightbox.addEventListener("click", (event) => {
+    if (!event.target.closest("img, button, a")) closeLightbox();
   });
   elements.lightboxCloseTop.addEventListener("click", closeLightbox);
   elements.lightboxCloseBottom.addEventListener("click", closeLightbox);

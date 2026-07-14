@@ -214,9 +214,11 @@ h1 {
 .province-select {
   width: min(280px, 100%);
   height: 38px;
+  padding-right: 34px;
   color: var(--primary);
   font-weight: 700;
   background: #fff;
+  cursor: text;
 }
 
 .year-select {
@@ -1392,9 +1394,7 @@ body::before {
 
 .modal__overlay,
 .lightbox__backdrop {
-  background:
-    linear-gradient(135deg, rgba(238, 245, 255, 0.92), rgba(248, 251, 255, 0.86)),
-    rgba(246, 248, 252, 0.88);
+  background: rgba(7, 15, 29, 0.74);
   backdrop-filter: blur(8px);
 }
 
