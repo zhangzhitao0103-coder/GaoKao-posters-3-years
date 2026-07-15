@@ -140,6 +140,9 @@ module_name
 | `image_copy_clicked` | 点击复制按钮 | 复制按钮点击量 |
 | `image_copy_succeeded` | 图片复制成功 | 实际复制成功量 |
 | `image_copy_failed` | 图片复制失败 | 复制异常排查 |
+| `selected_images_copy_clicked` | 点击复制选中图片 | 批量复制动作次数与选中图片量 |
+| `selected_images_copy_succeeded` | 选中图片复制成功 | 批量复制成功量 |
+| `selected_images_copy_failed` | 选中图片复制失败 | 批量复制异常排查 |
 | `reset_clicked` | 点击重置 | 重置使用量 |
 | `teacher_selected` | 老师被选择 | 老师选择量 |
 | `subject_selected` | 学科被选择 | 学科选择量 |
@@ -165,6 +168,7 @@ module_name
 | `result_count` | 筛选结果数量 | 32 |
 | `button_name` | 按钮名称 | 复制图片 |
 | `source` | 触发来源 | search_button |
+| `selected_image_count` | 批量复制选中的图片数 | 15 |
 
 ## 7. 页面访问量埋点
 
@@ -406,6 +410,49 @@ Series:
 image_copy_succeeded
 ```
 
+### 11.3.1 包含批量复制的图片复制总量
+
+“复制选中图片”一次可以复制多张，不能只按事件次数统计。批量复制点击事件使用数值属性 `selected_image_count` 记录当次选中的图片数。
+
+在同一个 Trends Insight 中配置两个 Series：
+
+```txt
+Series A:
+Event = image_copy_clicked
+Metric = Total count
+
+Series B:
+Event = selected_images_copy_clicked
+Metric = Sum of property value
+Property = selected_image_count
+
+Formula:
+A + B
+```
+
+计算口径：
+
+```txt
+图片复制总量 = 单张复制按钮点击次数 + 每次批量复制选中图片数之和
+```
+
+两个 Series 都建议添加：
+
+```txt
+Filter:
+project_name equals 有道领世高考喜报素材库
+```
+
+如需单独观察批量复制按钮被点击多少次，另建图表：
+
+```txt
+Series:
+selected_images_copy_clicked
+
+Metric:
+Total count
+```
+
 ### 11.4 学科筛选热度
 
 配置：
@@ -621,4 +668,3 @@ source
 - 新增了哪些事件名
 - PostHog 后台如何配置 Trends 图表查看页面访问量、图片点击量、图片复制按钮点击量
 ```
-

@@ -73,6 +73,7 @@ const state = {
     category: null,
     pageIndex: 0,
     pageSize: 15,
+    selectedIds: new Set(),
   },
   lightbox: {
     items: [],
@@ -100,6 +101,8 @@ const elements = {
   viewAllPrev: document.querySelector("#viewAllPrev"),
   viewAllNext: document.querySelector("#viewAllNext"),
   viewAllPageIndicator: document.querySelector("#viewAllPageIndicator"),
+  viewAllTogglePageSelection: document.querySelector("#viewAllTogglePageSelection"),
+  viewAllCopySelected: document.querySelector("#viewAllCopySelected"),
   lightbox: document.querySelector("#lightbox"),
   lightboxImage: document.querySelector("#lightboxImage"),
   lightboxTitle: document.querySelector("#lightboxTitle"),
@@ -471,6 +474,7 @@ function changeSectionPage(section, delta) {
 function openViewAll(section) {
   state.viewAll.category = section.category;
   state.viewAll.pageIndex = 0;
+  state.viewAll.selectedIds.clear();
   elements.viewAllModal.hidden = false;
   renderViewAllContent();
   trackEvent("section_view_all_clicked", {
@@ -478,6 +482,62 @@ function openViewAll(section) {
     category: section.category,
     result_count: getSectionItems(section).length,
   });
+}
+
+function createViewAllCard(item, sectionItems) {
+  const card = createMaterialCard(item, "card", sectionItems);
+  const selectionLabel = document.createElement("label");
+  const isSelected = state.viewAll.selectedIds.has(item.id);
+  selectionLabel.className = "selection-control";
+  selectionLabel.title = isSelected ? "取消选择" : "选择图片";
+  selectionLabel.innerHTML = `
+    <input type="checkbox" aria-label="选择 ${escapeHtml(item.title)}" ${isSelected ? "checked" : ""} />
+    <span aria-hidden="true"></span>
+  `;
+  selectionLabel.addEventListener("click", (event) => event.stopPropagation());
+  selectionLabel.querySelector("input").addEventListener("change", (event) => {
+    toggleViewAllSelection(item, event.currentTarget.checked);
+  });
+  card.querySelector(".thumb-frame").append(selectionLabel);
+  card.classList.toggle("material-card--selected", isSelected);
+  return card;
+}
+
+function toggleViewAllSelection(item, shouldSelect) {
+  const selectedIds = state.viewAll.selectedIds;
+  if (shouldSelect) selectedIds.add(item.id);
+  else selectedIds.delete(item.id);
+  renderViewAllContent();
+}
+
+function getCurrentViewAllPageItems() {
+  const section = SECTION_CONFIGS.find((entry) => entry.category === state.viewAll.category);
+  if (!section) return [];
+  const items = getSectionItems(section);
+  const start = state.viewAll.pageIndex * state.viewAll.pageSize;
+  return items.slice(start, start + state.viewAll.pageSize);
+}
+
+function toggleCurrentViewAllPageSelection() {
+  const visibleItems = getCurrentViewAllPageItems();
+  const allSelected = visibleItems.length > 0
+    && visibleItems.every((item) => state.viewAll.selectedIds.has(item.id));
+
+  visibleItems.forEach((item) => {
+    if (allSelected) state.viewAll.selectedIds.delete(item.id);
+    else state.viewAll.selectedIds.add(item.id);
+  });
+  renderViewAllContent();
+}
+
+function updateViewAllSelectionControls(visibleItems = getCurrentViewAllPageItems()) {
+  const selectedCount = state.viewAll.selectedIds.size;
+  const allVisibleSelected = visibleItems.length > 0
+    && visibleItems.every((item) => state.viewAll.selectedIds.has(item.id));
+  elements.viewAllCopySelected.textContent = `复制选中图片（${selectedCount}）`;
+  elements.viewAllCopySelected.disabled = selectedCount === 0;
+  elements.viewAllTogglePageSelection.textContent = allVisibleSelected ? "全不选" : "全选本页";
+  elements.viewAllTogglePageSelection.disabled = visibleItems.length === 0;
 }
 
 function renderViewAllContent() {
@@ -491,16 +551,19 @@ function renderViewAllContent() {
   elements.viewAllTitle.textContent = `${state.year === ALL ? "全部年份" : state.year}｜${section.category}｜共 ${items.length} 张`;
   elements.viewAllSubtitle.textContent = `当前筛选：${state.province === ALL ? "全部省份" : state.province}｜${state.subject === ALL ? "全部学科" : state.subject}`;
   elements.viewAllGrid.textContent = "";
-  visibleItems.forEach((item) => elements.viewAllGrid.append(createMaterialCard(item, "card", items)));
+  visibleItems.forEach((item) => elements.viewAllGrid.append(createViewAllCard(item, items)));
   elements.viewAllPageIndicator.textContent = `${state.viewAll.pageIndex + 1} / ${totalPages}`;
   elements.viewAllPrev.disabled = state.viewAll.pageIndex <= 0;
   elements.viewAllNext.disabled = state.viewAll.pageIndex >= totalPages - 1;
+  updateViewAllSelectionControls(visibleItems);
 }
 
 function closeViewAll() {
   elements.viewAllModal.hidden = true;
   state.viewAll.category = null;
   state.viewAll.pageIndex = 0;
+  state.viewAll.selectedIds.clear();
+  updateViewAllSelectionControls();
 }
 
 function changeViewAllPage(delta) {
@@ -581,6 +644,97 @@ async function copyImage(item, source) {
   }
 }
 
+async function copySelectedImages() {
+  const section = SECTION_CONFIGS.find((entry) => entry.category === state.viewAll.category);
+  if (!section) return;
+  const selectedItems = getSectionItems(section).filter((item) => state.viewAll.selectedIds.has(item.id));
+  if (!selectedItems.length) return;
+  const copyType = selectedItems.length === 1 ? "image_blob" : "image_html_multi";
+
+  const props = {
+    button_name: "复制选中图片",
+    copy_mode: "batch_selected",
+    copy_type: copyType,
+    selected_image_count: selectedItems.length,
+    image_ids: selectedItems.map((item) => item.id),
+    image_names: selectedItems.map((item) => item.fileName),
+    source: "view_all_modal",
+    category: section.category,
+    year: state.year,
+    province: state.province,
+    subject: state.subject,
+    page_index: state.viewAll.pageIndex,
+  };
+
+  trackEvent("selected_images_copy_clicked", props);
+  elements.viewAllCopySelected.disabled = true;
+  elements.viewAllCopySelected.textContent = `正在复制 ${selectedItems.length} 张...`;
+  try {
+    if (!navigator.clipboard || typeof navigator.clipboard.write !== "function" || !window.ClipboardItem) {
+      throw new Error("当前浏览器不支持复制图片本体");
+    }
+    const clipboardItems = selectedItems.length === 1
+      ? [new ClipboardItem({ "image/png": loadBatchImageAsPngBlob(selectedItems[0]) })]
+      : [createRichImageClipboardItem(selectedItems)];
+    await withTimeout(
+      navigator.clipboard.write(clipboardItems),
+      30000,
+      "复制超时，请减少选择数量后重试",
+    );
+    showToast(selectedItems.length === 1
+      ? "已复制图片"
+      : `已复制 ${selectedItems.length} 张图片（富文本）`);
+    trackEvent("selected_images_copy_succeeded", props);
+  } catch (error) {
+    const message = error.message === "复制超时，请减少选择数量后重试"
+      ? error.message
+      : "富文本复制失败，请减少数量后重试";
+    showToast(message);
+    trackEvent("selected_images_copy_failed", { ...props, error_message: error.message || "" });
+  } finally {
+    updateViewAllSelectionControls();
+  }
+}
+
+function createRichImageClipboardItem(items) {
+  const imageUrls = items.map((item) => new URL(item.imageUrl, window.location.href).href);
+  const imageHtml = items.map((item, index) => `
+    <p style="margin:0 0 8px">
+      <img src="${escapeHtml(imageUrls[index])}" alt="${escapeHtml(item.title)}" style="display:block;max-width:100%;height:auto">
+    </p>
+  `).join("");
+  const html = `<div>${imageHtml}</div>`;
+  const plainText = imageUrls.join("\n");
+  return new ClipboardItem({
+    "text/html": new Blob([html], { type: "text/html" }),
+    "text/plain": new Blob([plainText], { type: "text/plain" }),
+  });
+}
+
+function withTimeout(promise, timeoutMs, message) {
+  let timeoutId;
+  const timeout = new Promise((_, reject) => {
+    timeoutId = window.setTimeout(() => reject(new Error(message)), timeoutMs);
+  });
+  return Promise.race([promise, timeout]).finally(() => window.clearTimeout(timeoutId));
+}
+
+async function loadBatchImageAsPngBlob(item) {
+  const isLocalPreview = ["localhost", "127.0.0.1"].includes(window.location.hostname);
+  const primaryUrl = isLocalPreview && item.sourcePath ? item.sourcePath : item.imageUrl;
+  const fallbackUrl = primaryUrl === item.imageUrl ? item.sourcePath : item.imageUrl;
+  try {
+    return await loadImageAsPngBlob(primaryUrl);
+  } catch (primaryError) {
+    if (!fallbackUrl) throw primaryError;
+    try {
+      return await loadImageAsPngBlob(fallbackUrl);
+    } catch {
+      throw primaryError;
+    }
+  }
+}
+
 async function loadImageAsPngBlob(imageUrl) {
   if (!navigator.clipboard || typeof navigator.clipboard.write !== "function" || !window.ClipboardItem) {
     throw new Error("当前浏览器不支持复制图片本体");
@@ -647,6 +801,8 @@ function bindEvents() {
   elements.yearSelect.addEventListener("change", (event) => selectYear(event.target.value));
   elements.viewAllPrev.addEventListener("click", () => changeViewAllPage(-1));
   elements.viewAllNext.addEventListener("click", () => changeViewAllPage(1));
+  elements.viewAllTogglePageSelection.addEventListener("click", toggleCurrentViewAllPageSelection);
+  elements.viewAllCopySelected.addEventListener("click", copySelectedImages);
   elements.viewAllModal.querySelector(".modal__overlay").addEventListener("click", closeViewAll);
   elements.viewAllModal.addEventListener("click", (event) => {
     if (event.target.closest("[data-close-modal]")) {

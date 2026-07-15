@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>有道领世高考喜报素材库</title>
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23173B6D'/%3E%3Cpath d='M8 17h16v8H8zM10 8h12v7H10z' fill='%23FF9F1C'/%3E%3C/svg%3E" />
-    <link rel="stylesheet" href="./styles.css?v=20260714-local-ui-5" />
+    <link rel="stylesheet" href="./styles.css?v=20260715-batch-copy-1" />
     <script>
       !function(t,e){var o,n,p,r;e.__SV||(window.posthog&&window.posthog.__loaded)||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="capture identify reset register register_once unregister opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
 
@@ -107,7 +107,15 @@
             <h3 id="viewAllTitle">2025｜提分学员｜共 0 张</h3>
             <p id="viewAllSubtitle">当前筛选下的全部素材</p>
           </div>
-          <button class="icon-button" type="button" data-close-modal aria-label="关闭">×</button>
+          <div class="modal__header-actions">
+            <button id="viewAllTogglePageSelection" class="ghost-button select-page-button" type="button">
+              全选本页
+            </button>
+            <button id="viewAllCopySelected" class="primary-button batch-copy-button" type="button" disabled>
+              复制选中图片（0）
+            </button>
+            <button class="icon-button" type="button" data-close-modal aria-label="关闭">×</button>
+          </div>
         </div>
         <div id="viewAllGrid" class="modal-grid"></div>
         <div class="modal__footer">
@@ -145,6 +153,6 @@
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
     <script src="./data.js"></script>
-    <script src="./app.js?v=20260714-local-ui-5"></script>
+    <script src="./app.js?v=20260715-batch-copy-1"></script>
   </body>
 </html>
