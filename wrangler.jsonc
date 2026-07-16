@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "gaokao-posters-3years",
+  "name": "gaokao-posters-3-years",
   "compatibility_date": "2026-07-13",
   "observability": {
     "enabled": true
