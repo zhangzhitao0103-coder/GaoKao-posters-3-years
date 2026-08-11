@@ -15,6 +15,8 @@ function trackEvent(eventName, properties = {}) {
 }
 
 const MATERIALS = Array.isArray(window.MATERIALS) ? window.MATERIALS : [];
+const ACCESS_PASSWORD = "lingshigaoxiao";
+const ACCESS_SESSION_KEY = "gaokao-material-library-access";
 const AVAILABLE_YEARS = [...new Set(MATERIALS.map((item) => item.year).filter(Boolean))]
   .sort((a, b) => b.localeCompare(a, "zh-Hans-CN", { numeric: true }));
 const CURRENT_YEAR = AVAILABLE_YEARS[0] || "2025";
@@ -83,6 +85,15 @@ const state = {
 };
 
 const elements = {
+  accessGate: document.querySelector("#accessGate"),
+  accessPosterRows: document.querySelector("#accessPosterRows"),
+  accessForm: document.querySelector("#accessForm"),
+  accessPassword: document.querySelector("#accessPassword"),
+  accessSubmit: document.querySelector("#accessSubmit"),
+  accessStatus: document.querySelector("#accessStatus"),
+  accessLock: document.querySelector("#accessLock"),
+  accessPasswordProgress: document.querySelector("#accessPasswordProgress"),
+  materialLibraryApp: document.querySelector("#materialLibraryApp"),
   totalYears: document.querySelector("#totalYears"),
   totalImages: document.querySelector("#totalImages"),
   totalCategories: document.querySelector("#totalCategories"),
@@ -119,6 +130,7 @@ const elements = {
 };
 
 let toastTimer = null;
+let appInitialized = false;
 
 function normalizeText(value) {
   return String(value || "").toLowerCase().trim();
@@ -768,6 +780,127 @@ function escapeHtml(value) {
     .replaceAll('"', "&quot;");
 }
 
+function hasAccessSession() {
+  try {
+    return window.sessionStorage.getItem(ACCESS_SESSION_KEY) === "granted";
+  } catch {
+    return false;
+  }
+}
+
+function saveAccessSession() {
+  try {
+    window.sessionStorage.setItem(ACCESS_SESSION_KEY, "granted");
+  } catch {
+    // The page remains accessible for the current load when storage is unavailable.
+  }
+}
+
+function renderAccessPosterRows() {
+  const sourceItems = MATERIALS.filter((item) => item.thumbUrl);
+  if (!sourceItems.length) return;
+  const sampleSize = Math.min(18, sourceItems.length);
+  const step = Math.max(1, Math.floor(sourceItems.length / sampleSize));
+  const sample = Array.from({ length: sampleSize }, (_, index) => sourceItems[index * step]);
+
+  elements.accessPosterRows.textContent = "";
+  for (let rowIndex = 0; rowIndex < 3; rowIndex += 1) {
+    const row = document.createElement("div");
+    row.className = `access-poster-row access-poster-row--${rowIndex + 1}`;
+    const ordered = [...sample.slice(rowIndex * 4), ...sample.slice(0, rowIndex * 4)];
+    const repeated = [...ordered, ...ordered];
+    row.innerHTML = repeated.map((item) => `
+      <figure class="access-poster">
+        <img src="${item.thumbUrl}" alt="" loading="eager" decoding="async" />
+      </figure>
+    `).join("");
+    elements.accessPosterRows.append(row);
+  }
+}
+
+function showAccessError(message) {
+  elements.accessStatus.textContent = message;
+  elements.accessForm.classList.remove("is-error");
+  elements.accessLock.classList.remove("is-error", "is-typing");
+  void elements.accessForm.offsetWidth;
+  elements.accessForm.classList.add("is-error");
+  elements.accessLock.classList.add("is-error");
+  elements.accessPassword.setAttribute("aria-invalid", "true");
+  elements.accessPassword.focus();
+}
+
+function renderAccessPasswordProgress() {
+  elements.accessPasswordProgress.innerHTML = Array.from(
+    { length: ACCESS_PASSWORD.length },
+    () => "<i></i>",
+  ).join("");
+}
+
+function updateAccessPasswordProgress() {
+  const enteredLength = elements.accessPassword.value.length;
+  elements.accessPasswordProgress.querySelectorAll("i").forEach((dot, index) => {
+    dot.classList.toggle("is-active", index < enteredLength);
+  });
+  elements.accessForm.classList.remove("is-error");
+  elements.accessLock.classList.remove("is-error");
+  elements.accessPassword.removeAttribute("aria-invalid");
+  elements.accessLock.classList.remove("is-typing");
+  void elements.accessLock.offsetWidth;
+  if (enteredLength) elements.accessLock.classList.add("is-typing");
+}
+
+function revealMaterialLibrary(animate = true) {
+  const finish = () => {
+    elements.accessGate.hidden = true;
+    elements.materialLibraryApp.inert = false;
+    elements.materialLibraryApp.setAttribute("aria-hidden", "false");
+    document.body.classList.remove("is-access-locked");
+    initializeMaterialLibrary();
+  };
+
+  if (!animate) {
+    finish();
+    return;
+  }
+
+  // Prepare the real library behind the doors so its cards are revealed as they open.
+  initializeMaterialLibrary();
+  elements.accessStatus.textContent = "验证通过，知识宝库正在开启";
+  elements.accessSubmit.disabled = true;
+  elements.accessPassword.disabled = true;
+  elements.accessGate.classList.add("is-opening");
+  window.setTimeout(finish, 3600);
+}
+
+function initializeAccessGate() {
+  if (hasAccessSession()) {
+    revealMaterialLibrary(false);
+    return;
+  }
+
+  renderAccessPosterRows();
+  renderAccessPasswordProgress();
+  elements.accessPassword.addEventListener("input", updateAccessPasswordProgress);
+  elements.accessForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const password = elements.accessPassword.value.trim();
+    if (password !== ACCESS_PASSWORD) {
+      showAccessError(password ? "密码错误，请重新输入" : "请输入访问密码");
+      trackEvent("access_denied", { reason: password ? "incorrect_password" : "empty_password" });
+      return;
+    }
+
+    saveAccessSession();
+    elements.accessForm.classList.remove("is-error");
+    elements.accessForm.classList.add("is-success");
+    elements.accessPassword.removeAttribute("aria-invalid");
+    trackEvent("access_granted");
+    revealMaterialLibrary(true);
+  });
+  window.requestAnimationFrame(() => elements.accessPassword.focus());
+  trackEvent("access_gate_viewed");
+}
+
 function bindEvents() {
   elements.resetButton.addEventListener("click", () => {
     const previous = {
@@ -840,7 +973,9 @@ function bindEvents() {
   });
 }
 
-function init() {
+function initializeMaterialLibrary() {
+  if (appInitialized) return;
+  appInitialized = true;
   bindEvents();
   renderAll();
   trackEvent("tool_page_viewed", {
@@ -852,4 +987,4 @@ function init() {
   });
 }
 
-init();
+initializeAccessGate();
