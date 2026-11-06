@@ -17,7 +17,6 @@ function trackEvent(eventName, properties = {}) {
 const MATERIALS = Array.isArray(window.MATERIALS) ? window.MATERIALS : [];
 const AVAILABLE_YEARS = [...new Set(MATERIALS.map((item) => item.year).filter(Boolean))]
   .sort((a, b) => b.localeCompare(a, "zh-Hans-CN", { numeric: true }));
-const CURRENT_YEAR = AVAILABLE_YEARS[0] || "2025";
 const ALL = "全部";
 const UNKNOWN_PROVINCE = "未知省份";
 let availableProvinceOptions = [ALL];
@@ -65,7 +64,7 @@ const EXAM_PROVINCE_GROUPS = [
 ];
 
 const state = {
-  year: CURRENT_YEAR,
+  year: ALL,
   province: ALL,
   subject: ALL,
   keyword: "",
@@ -791,7 +790,7 @@ function bindEvents() {
     };
     state.province = ALL;
     state.subject = ALL;
-    state.year = CURRENT_YEAR;
+    state.year = ALL;
     state.keyword = "";
     resetPages();
     renderAll();
