@@ -27,10 +27,10 @@ const SECTION_CONFIGS = [
   { category: "高考状元", key: "champions", elementId: "section-champions", pageSize: 6, gridClass: "grid-3" },
   { category: "顶尖名校", key: "top-university", elementId: "section-top-university", pageSize: 6, gridClass: "grid-3" },
   { category: "超高分喜报", key: "ultra-high-score", elementId: "section-ultra-high-score", pageSize: 6, gridClass: "grid-3" },
-  { category: "单科高分", key: "single-subject-high-score", elementId: "section-single-subject-high-score", pageSize: 4, gridClass: "grid-2" },
-  { category: "高分学员", key: "high-score-student", elementId: "section-high-score-student", pageSize: 4, gridClass: "grid-2" },
-  { category: "提分学员", key: "score-improvement", elementId: "section-score-improvement", pageSize: 8, gridClass: "grid-4" },
-  { category: "押题学员反馈", key: "prediction-feedback", elementId: "section-prediction-feedback", pageSize: 8, gridClass: "grid-2" },
+  { category: "单科高分", key: "single-subject-high-score", elementId: "section-single-subject-high-score", pageSize: 6, gridClass: "grid-3" },
+  { category: "高分学员", key: "high-score-student", elementId: "section-high-score-student", pageSize: 6, gridClass: "grid-3" },
+  { category: "提分学员", key: "score-improvement", elementId: "section-score-improvement", pageSize: 6, gridClass: "grid-3" },
+  { category: "押题学员反馈", key: "prediction-feedback", elementId: "section-prediction-feedback", pageSize: 8, gridClass: "grid-feedback-row" },
 ];
 const SCHOOL_PRIORITY = ["清华大学", "北京大学", "复旦大学", "上海交通大学", "浙江大学", "中国人民大学", "香港大学"];
 const EXAM_PROVINCE_GROUPS = [

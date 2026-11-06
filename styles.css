@@ -2321,7 +2321,26 @@ body::before {
 }
 
 .board-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 18px;
+}
+
+#section-prediction-feedback {
+  grid-column: 1 / -1;
+  min-width: 0;
+}
+
+.grid-feedback-row {
+  grid-template-columns: repeat(8, minmax(150px, 1fr));
+  overflow-x: auto;
+}
+
+@media (max-width: 1100px) {
+  .board-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 700px) {
+  .board-grid { grid-template-columns: minmax(0, 1fr); }
 }
 
 .board-column {
