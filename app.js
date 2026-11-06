@@ -24,6 +24,7 @@ let availableProvinceOptions = [ALL];
 const SUBJECTS = ["全部", "语文", "数学", "英语", "物理", "化学", "生物", "政治", "历史", "地理"];
 const PROVINCE_COLLATOR = new Intl.Collator("zh-Hans-CN-u-co-pinyin", { numeric: true });
 const SECTION_CONFIGS = [
+  { category: "高考状元", key: "champions", elementId: "section-champions", pageSize: 6, gridClass: "grid-3" },
   { category: "顶尖名校", key: "top-university", elementId: "section-top-university", pageSize: 6, gridClass: "grid-3" },
   { category: "超高分喜报", key: "ultra-high-score", elementId: "section-ultra-high-score", pageSize: 6, gridClass: "grid-3" },
   { category: "单科高分", key: "single-subject-high-score", elementId: "section-single-subject-high-score", pageSize: 4, gridClass: "grid-2" },
@@ -227,6 +228,7 @@ function compareByFileName(a, b) {
 
 function sortItems(items, category) {
   return [...items].sort((a, b) => {
+    if (category === "高考状元") return (a.championLevel === "province" ? 0 : 1) - (b.championLevel === "province" ? 0 : 1) || compareByFileName(a, b);
     if (category === "顶尖名校") return schoolRank(a) - schoolRank(b) || compareByFileName(a, b);
     if (category === "超高分喜报") return (b.totalScore || 0) - (a.totalScore || 0) || compareByFileName(a, b);
     if (category === "单科高分") return (b.score || 0) - (a.score || 0) || compareByFileName(a, b);

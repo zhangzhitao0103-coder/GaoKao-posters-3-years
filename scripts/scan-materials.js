@@ -6,7 +6,7 @@ const ROOT_DIR = path.resolve(__dirname, "..");
 const OUTPUT_FILE = path.join(ROOT_DIR, "data.js");
 const IMAGE_EXTENSIONS = new Set([".jpg", ".jpeg", ".png", ".webp"]);
 const YEARS = new Set(["2024", "2025", "2026"]);
-const CATEGORIES = ["单科高分", "押题学员反馈", "提分学员", "超高分喜报", "顶尖名校", "高分学员"];
+const CATEGORIES = ["单科高分", "押题学员反馈", "提分学员", "超高分喜报", "顶尖名校", "高分学员", "高考状元"];
 const SUBJECTS = ["语文", "数学", "英语", "物理", "化学", "生物", "政治", "历史", "地理"];
 const PROVINCES = [
   "东北四省",
@@ -48,6 +48,7 @@ const PROVINCES = [
 ];
 
 const CONTENT_TYPE_MAP = {
+  高考状元: "gaokao_champion",
   单科高分: "single_subject_high_score",
   押题学员反馈: "prediction_feedback",
   提分学员: "score_improvement",
@@ -112,7 +113,7 @@ function getPathInfo(filePath) {
   const yearFromName = rawName.match(/^(20\d{2})_/);
   const year = (yearFromCategory && yearFromCategory[1]) || (yearFromName && yearFromName[1]) || yearFromPath || null;
   const subject = findKnownValue(compact, SUBJECTS);
-  const province = findProvince(segments, rawName);
+  const province = category === "高考状元" ? PROVINCES.find((p) => rawName.startsWith(p)) || null : findProvince(segments, rawName);
 
   return { relativePath, segments, rawName, category, year, subject, province };
 }
@@ -260,6 +261,13 @@ function parseMaterial(filePath, index) {
     feedbackIndex: currentFeedbackIndex,
     sortIndex: index
   };
+
+  if (info.category === "高考状元") {
+    const rest = info.rawName.slice((info.province || "").length).replace(/^(省|市|自治区)/, "");
+    item.championLevel = /^(?:[^\s]*[市州区县盟旗])/.test(rest.split("状元")[0]) ? "city" : "province";
+    item.subject = null;
+    item.studentName = null;
+  }
 
   item.title = buildTitle(item);
   item.tags = [
