@@ -616,7 +616,9 @@ function renderLightbox() {
   elements.lightboxFile.textContent = item.fileName;
   elements.lightboxTags.textContent = (item.tags || []).join(" / ");
   elements.lightboxDownload.href = item.imageUrl;
-  elements.lightboxDownload.download = item.fileName;
+  elements.lightboxDownload.download = item.category === "高考状元"
+    ? item.fileName.replace(/\.[^.]+$/, ".webp")
+    : item.fileName;
 }
 
 function closeLightbox() {
