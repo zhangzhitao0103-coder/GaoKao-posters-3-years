@@ -30,6 +30,7 @@ pip install faster-whisper scipy openpyxl
 ```
 
 ```bash
+python3 scripts/import-extra.py           # 可选：导入 data/extra/ 下的三张补充表（不入库）
 npm run data                               # 清洗数据 + 导出 Excel
 node scripts/render-poster.js 河北          # 生成海报 → output/posters/河北.jpg
 node scripts/render-video.js 河北 --preview # 只截关键帧，检查版式
@@ -49,3 +50,13 @@ node scripts/render-video.js 河北           # 生成视频 → output/videos/�
 - 城市状元如实标注为"XX市状元"
 - "押题学员反馈"不纳入；未标注省份的日常提分案例无法归属，不纳入
 - 某类为 0 时自动隐藏该板块；超出上限的写"…… 等 N 位学员"
+
+## 补充表
+
+`data/extra/` 下放三张人工/OCR 整理的补充表（含学员姓名，不入库）：
+
+- `高考喜报学员档案.xlsx`：按记录 ID 补充省排名、单科成绩、总分、姓名
+- `日常提分学员.xlsx`：按学科 + 起止分补充日常案例的省份、学员姓名
+- `学霸视频学员.xlsx`：按省份 + 姓氏 + 总分补充视频学员的单科成绩、成绩变化
+
+先运行 `python3 scripts/import-extra.py` 生成 `data/extra/extra.json`，再运行 `npm run data` 合并。合并条数写在 `data/extra/merge-report.json`。

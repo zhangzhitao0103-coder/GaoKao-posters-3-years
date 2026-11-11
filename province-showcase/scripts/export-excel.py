@@ -47,25 +47,29 @@ rows = lambda key: [(p['province'], x) for p in provs for x in p['gaokao'][key]]
 sheet('状元', ['省份', '年份', '状元称号', '姓名(打码)', '原始姓名', '高考成绩', '录取大学', '单科亮点'],
       [[p, x['year'], x['title'], x['name'], x['rawName'], x['scoreText'], x['school'], hl(x)] for p, x in rows('champion')],
       {'状元称号': 22, '录取大学': 18, '单科亮点': 20})
-sheet('名校录取', ['省份', '年份', '姓名(打码)', '原始姓名', '录取大学', '高考总分', '单科亮点'],
-      [[p, x['year'], x['name'], x['rawName'], x['school'], x.get('totalScore'), hl(x)] for p, x in rows('school')],
+sheet('名校录取', ['省份', '年份', '姓名(打码)', '原始姓名', '录取大学', '高考总分', '单科亮点', '省排名'],
+      [[p, x['year'], x['name'], x['rawName'], x['school'], x.get('totalScore'), hl(x), x.get('rank')] for p, x in rows('school')],
       {'录取大学': 20, '单科亮点': 20})
-sheet('总分高分', ['省份', '年份', '姓名(打码)', '原始姓名', '高考总分', '单科亮点'],
-      [[p, x['year'], x['name'] or '（无姓名）', x['rawName'], x['totalScore'], hl(x)] for p, x in rows('total')],
+sheet('总分高分', ['省份', '年份', '姓名(打码)', '原始姓名', '高考总分', '单科亮点', '省排名', '科类'],
+      [[p, x['year'], x['name'] or '（无姓名）', x['rawName'], x['totalScore'], hl(x), x.get('rank'), x.get('stream')] for p, x in rows('total')],
       {'单科亮点': 20})
-sheet('单科高分', ['省份', '年份', '姓名(打码)', '原始姓名', '学科', '单科成绩', '高考总分'],
-      [[p, x['year'], x['name'] or '（无姓名）', x['rawName'], x['subject'], x['score'], x.get('totalScore')] for p, x in rows('single')])
+sheet('单科高分', ['省份', '年份', '姓名(打码)', '原始姓名', '学科', '单科成绩', '高考总分', '省排名'],
+      [[p, x['year'], x['name'] or '（无姓名）', x['rawName'], x['subject'], x['score'], x.get('totalScore'), x.get('rank')] for p, x in rows('single')])
 sheet('高考提分', ['省份', '年份', '学科', '提分前', '提分后', '提升分数', '原始描述'],
       [[p, x['year'], x.get('subject'), x.get('fromText') or x.get('from'), x.get('to'), x.get('delta'), x['text']] for p, x in rows('improve')],
       {'原始描述': 36})
-sheet('日常提分', ['省份', '学科', '主讲老师', '分数段', '提分前', '提分后', '提升分数', '原始描述'],
-      [[p['province'], x['subject'], x['teacher'], x['band'], x.get('fromText') or x.get('from'), x.get('to'), x.get('delta'), x['text']]
+sheet('日常提分', ['省份', '学科', '主讲老师', '学员(打码)', '分数段', '提分前', '提分后', '提升分数', '原始描述', '省份来源'],
+      [[p['province'], x['subject'], x['teacher'], x.get('student'), x['band'], x.get('fromText') or x.get('from'), x.get('to'), x.get('delta'), x['text'], x.get('provinceFrom') or '原数据']
        for p in provs for x in p['daily']],
       {'原始描述': 24})
-sheet('学员视频', ['省份', '年份', '姓名(打码)', '原始姓名', '高考总分', '录取大学', '视频标题', '类型', '老师', '视频链接'],
-      [[p['province'], x['year'], x['name'], x['rawName'], x['score'], x['school'], x['title'], x['category'], x['teacher'], x['url']]
+sheet('学员视频', ['省份', '年份', '姓名(打码)', '原始姓名', '高考总分', '录取大学', '单科成绩', '成绩变化', '视频标题', '类型', '老师', '视频链接'],
+      [[p['province'], x['year'], x['name'], x['rawName'], x['score'], x['school'], '、'.join(f"{s['subject']}{s['score']}" for s in x.get('singles') or []), x.get('change'), x['title'], x['category'], x['teacher'], x['url']]
        for p in provs for x in p['videos']],
       {'视频标题': 40, '录取大学': 18, '视频链接': 28})
+
+rep_file = ROOT / 'data' / 'extra' / 'merge-report.json'
+if rep_file.exists():
+    sheet('补充表合并情况', ['补充项', '条数'], [[k, v] for k, v in json.loads(rep_file.read_text()).items()], {'补充项': 30})
 
 note = wb.create_sheet('说明')
 for line in [
@@ -73,6 +77,8 @@ for line in [
     '“押题学员反馈”不纳入；日常提分中未标注省份的案例无法归属，未纳入',
     '同一学员（同省同年、姓名首末字相同）跨类别只保留最高一档：状元 > 名校 > 总分高分 > 单科高分，低档信息合并到“单科亮点/高考总分”列',
     '“姓名(打码)”为海报/视频对外展示用；“原始姓名”仅限内部核对，请勿外传',
+    '已合并三张补充表（喜报OCR档案、日常提分学员、学霸视频学员）：补充省排名、单科成绩、姓名、日常案例省份与学员等，见“补充表合并情况”',
+    'OCR识别的姓名只采用海报脱敏格式且姓氏常见的；超过满分或低于30的单科分视为误识别已剔除',
 ]:
     note.append([line])
 note.column_dimensions['A'].width = 110

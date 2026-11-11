@@ -93,14 +93,45 @@ function parseDelta(text) {
   return m ? Number(m[1]) : null;
 }
 
+// ---------- 补充表（scripts/import-extra.py 生成） ----------
+const EXTRA_FILE = path.join(ROOT, 'data', 'extra', 'extra.json');
+const EXTRA = fs.existsSync(EXTRA_FILE) ? JSON.parse(fs.readFileSync(EXTRA_FILE, 'utf8')) : { gaokao: {}, daily: [], video: [] };
+const REPORT = {};
+const bump = (k) => { REPORT[k] = (REPORT[k] || 0) + 1; };
+const hlText = (x) => `${x.subject}${x.score}`;
+function addHighlights(card, singles, skipSubject) {
+  for (const x of singles || []) {
+    if (x.subject === skipSubject) continue;
+    const hl = (card.highlights ||= []);
+    if (hl.some((h) => h.startsWith(x.subject))) continue;
+    hl.push(hlText(x));
+    card.hlFromExtra = true;
+  }
+}
+
 // ---------- 喜报库 ----------
 function buildGaokao(materials) {
   const out = { champion: [], school: [], total: [], single: [], improve: [] };
   for (const m of materials) {
-    const prov = matchProvince(m.province) || matchProvince(m.rawName);
+    const ex = EXTRA.gaokao[m.id] || {};
+    let prov = matchProvince(m.province) || matchProvince(m.rawName);
+    if (!prov && matchProvince(ex.province)) {
+      prov = matchProvince(ex.province);
+      bump('喜报-补充省份');
+    }
     if (!prov) continue;
     const year = m.year;
     const base = { province: prov, year, image: m.previewUrl || m.imageUrl, source: m.fileName };
+    if (ex.rank) { base.rank = ex.rank; bump('喜报-补充省排名'); }
+    if (ex.stream) base.stream = ex.stream;
+    // 姓名：原数据没有时，用补充表（文件名来源或海报脱敏格式）
+    const nameOf = () => {
+      const n = cleanName(m.studentName);
+      if (n) return n;
+      const e = ex.name && cleanName(ex.name.replace(/＊/g, '*'));
+      if (e) bump('喜报-补充姓名');
+      return e || null;
+    };
 
     switch (m.category) {
       case '高考状元': {
@@ -122,30 +153,41 @@ function buildGaokao(materials) {
         break;
       }
       case '顶尖名校': {
-        const name = cleanName(m.studentName);
+        const name = nameOf();
         if (!m.school) break;
-        out.school.push({ ...base, rawName: name, name: maskName(name), school: m.school, tier: schoolTier(m.school) });
+        const card = { ...base, rawName: name, name: maskName(name), school: m.school, tier: schoolTier(m.school) };
+        if (ex.total) { card.totalScore = ex.total; card.scoreText = `${ex.total}分`; bump('喜报-补充名校学员总分'); }
+        addHighlights(card, ex.singles);
+        out.school.push(card);
         break;
       }
       case '超高分喜报': {
-        const name = cleanName(m.studentName);
+        const name = nameOf();
         if (!m.totalScore || m.totalScore < 300) break;
-        out.total.push({ ...base, rawName: name, name: maskName(name), totalScore: m.totalScore });
+        const card = { ...base, rawName: name, name: maskName(name), totalScore: m.totalScore };
+        addHighlights(card, ex.singles);
+        out.total.push(card);
         break;
       }
       case '单科高分': {
-        const name = cleanName(m.studentName);
+        const name = nameOf();
         if (!m.subject || !m.score) break;
-        out.single.push({ ...base, rawName: name, name: maskName(name), subject: m.subject, score: Number(m.score) });
+        const card = { ...base, rawName: name, name: maskName(name), subject: m.subject, score: Number(m.score) };
+        if (ex.total) { card.totalScore = ex.total; bump('喜报-补充单科学员总分'); }
+        out.single.push(card);
         break;
       }
       case '高分学员': {
         // 多为“语文124 总分675”，基本无姓名
-        const name = cleanName(m.studentName);
+        const name = nameOf();
+        const total = m.totalScore || ex.total || null;
+        if (!m.totalScore && ex.total) bump('喜报-补充高分学员总分');
         if (m.subject && SUBJECTS.includes(m.subject) && m.score) {
-          out.single.push({ ...base, rawName: name, name: maskName(name), subject: m.subject, score: Number(m.score), totalScore: m.totalScore || null, anonymous: !name });
-        } else if (m.totalScore) {
-          out.total.push({ ...base, rawName: name, name: maskName(name), totalScore: m.totalScore, anonymous: !name });
+          out.single.push({ ...base, rawName: name, name: maskName(name), subject: m.subject, score: Number(m.score), totalScore: total, anonymous: !name });
+        } else if (total) {
+          const card = { ...base, rawName: name, name: maskName(name), totalScore: total, anonymous: !name };
+          addHighlights(card, ex.singles);
+          out.total.push(card);
         } else if (m.improvementScore) {
           const ft = parseFromTo(m.rawName);
           out.improve.push({ ...base, subject: '总分', ...(ft || {}), delta: m.improvementScore, text: m.rawName.split('_').pop() });
@@ -158,7 +200,8 @@ function buildGaokao(materials) {
         // “总分从340提升到443”优先于前面的单科描述
         const totalPart = text.match(/总分从?\d{3}.*$/);
         const ft = parseFromTo(totalPart ? totalPart[0] : text);
-        const delta = (ft && ft.delta) || m.improvementScore || parseDelta(text);
+        let delta = (ft && ft.delta) || m.improvementScore || parseDelta(text);
+        if (!delta && ex.gain) { delta = ex.gain; bump('喜报-补充提分值'); }
         // 起止分超过 150 的一定是总分；“超强提分”目录下未标学科的也是总分
         const isTotal = (ft && ft.to > 150) || !SUBJECTS.includes(m.subject) || /^总分/.test(text);
         const subject = isTotal ? '总分' : m.subject;
@@ -179,10 +222,20 @@ function buildDaily(caseData) {
   for (const t of caseData.teachers) {
     for (const band of t.scoreBands) {
       for (const c of band.cases) {
-        const prov = matchProvince(c.province);
-        if (!prov) continue;
         const text = c.scoreText || c.name.split('_').slice(2).join('_');
         const ft = parseFromTo(text);
+        let prov = matchProvince(c.province);
+        let provinceFrom;
+        const ex = ft ? EXTRA.daily.filter((x) => x.subject === t.subject && x.from === ft.from && x.to === ft.to) : [];
+        if (!prov) {
+          // 补充表中同学科、同起止分且省份唯一时，补上省份
+          const provs = [...new Set(ex.map((x) => matchProvince(x.province)).filter(Boolean))];
+          if (provs.length === 1) { prov = provs[0]; provinceFrom = '补充表'; bump('日常-补充省份'); }
+        }
+        if (!prov) continue;
+        const exName = ex.find((x) => matchProvince(x.province) === prov && x.name);
+        const student = exName ? maskName(exName.name.replace(/\*+/g, '*')) : null;
+        if (student) bump('日常-补充学员姓名');
         const key = `${prov}|${t.name}|${ft ? `${ft.from}-${ft.to}` : text}`;
         if (seen.has(key)) continue;
         seen.add(key);
@@ -191,6 +244,8 @@ function buildDaily(caseData) {
           teacher: t.name,
           subject: t.subject,
           band: band.name,
+          student,
+          provinceFrom,
           ...(ft || {}),
           delta: (ft && ft.delta) || parseDelta(text),
           text: text.replace(/_[0-9a-f]{8,}$/, ''),
@@ -219,7 +274,16 @@ function buildVideos(videos) {
       url: v.videoUrl,
       cover: v.coverPath,
     }))
-    .filter((v) => v.province && v.url);
+    .filter((v) => v.province && v.url)
+    .map((v) => {
+      // 学霸视频学员表：同省、同姓、同总分即视为同一人，补充单科与成绩变化
+      const b = EXTRA.video.find((x) => matchProvince(x.province) === v.province && x.total && x.total === v.score && x.name && v.rawName && x.name[0] === v.rawName[0]);
+      if (b) {
+        bump('视频-补充单科/成绩变化');
+        return { ...v, singles: b.singles, change: b.change || null };
+      }
+      return v;
+    });
 }
 
 // ---------- 跨类别去重合并 ----------
@@ -305,6 +369,12 @@ function main() {
   sortAll(g);
   const daily = buildDaily(cases).sort((a, b) => (b.delta || 0) - (a.delta || 0));
   const vids = buildVideos(videos);
+  // 补充表合并情况
+  const used = new Set();
+  for (const p of Object.values(g)) for (const x of p) if (x.rank) used.add(x);
+  fs.mkdirSync(path.join(ROOT, 'data', 'extra'), { recursive: true });
+  fs.writeFileSync(path.join(ROOT, 'data', 'extra', 'merge-report.json'), JSON.stringify(REPORT, null, 1));
+  console.log('补充表合并：', REPORT);
 
   const outDir = path.join(ROOT, 'data', 'provinces');
   fs.mkdirSync(outDir, { recursive: true });
