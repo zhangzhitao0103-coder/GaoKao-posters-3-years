@@ -27,8 +27,14 @@ function selectShowcase(d, caps = {}) {
   const totalShown = (totalNamed.length >= 6 ? totalNamed : g.total).slice(0, c.total);
 
   // 单科：每科取前 N
+  // 已并入更高档（状元/名校/总分）的学员，其单科亮点也计入单科榜
+  const absorbed = [...g.champion, ...g.school, ...g.total].flatMap((x) => (x.highlights || []).map((h) => {
+    const m = h.match(/^(\D+)([\d.]+)$/);
+    return m ? { name: x.name, year: x.year, subject: m[1], score: Number(m[2]), totalScore: x.totalScore } : null;
+  }).filter(Boolean));
+  const singlePool = [...g.single, ...absorbed].sort((a, b) => b.score - a.score);
   const singleBySubject = SUBJECTS.map((s) => {
-    const list = g.single.filter((x) => x.subject === s);
+    const list = singlePool.filter((x) => x.subject === s);
     const named = list.filter((x) => x.name);
     return { subject: s, count: list.length, people: [...named, ...list.filter((x) => !x.name)].slice(0, c.singlePerSubject) };
   }).filter((x) => x.people.length);
@@ -58,15 +64,36 @@ function selectShowcase(d, caps = {}) {
     return { subject: s, count: all.length, teachers: new Set(all.map((x) => x.teacher)).size, cases: picked };
   }).filter((x) => x.count);
 
+  // 亮点速览
+  const FULLM = { 语文: 150, 数学: 150, 英语: 150 };
+  const allTotals = [...g.champion, ...g.school, ...g.total].map((x) => x.totalScore).filter(Boolean);
+  const bestSingle = [...singlePool].sort((a, b) => b.score / (FULLM[b.subject] || 100) - a.score / (FULLM[a.subject] || 100))[0];
+  const dailyRanged = d.daily.filter((x) => x.from != null);
+  const facts = [];
+  if (allTotals.length) facts.push({ label: '高考最高分', value: Math.max(...allTotals), unit: '分' });
+  if (bestSingle) facts.push({ label: `单科最高 · ${bestSingle.subject}`, value: bestSingle.score, unit: '分' });
+  const maxGain = Math.max(withRange[0]?.delta || 0, dailyRanged[0]?.delta || 0, g.improve[0]?.delta || 0);
+  if (maxGain) facts.push({ label: '最高提分', value: maxGain, unit: '分', prefix: '+' });
+  if (d.stats.dailyTeachers) facts.push({ label: '提分名师', value: d.stats.dailyTeachers, unit: '位' });
+
+  // 日常提分之星：前三（尽量不同老师）
+  const dailyTop = [];
+  for (const x of dailyRanged) {
+    if (dailyTop.length >= 3) break;
+    if (!dailyTop.some((y) => y.teacher === x.teacher)) dailyTop.push(x);
+  }
+
   return {
     province: d.province,
     stats: d.stats,
+    facts,
+    dailyTop,
     champion: g.champion,
     qingbei: { groups: groupBySchool(qbShown), shown: qbShown.length, total: qb.length },
     otherSchool: { groups: groupBySchool(otherShown), shown: otherShown.length, total: others.length },
     total: { people: totalShown, total: g.total.length },
-    single: { subjects: singleBySubject, total: g.single.length },
-    improve: { bars: withRange.slice(0, c.improve), texts: textOnly.filter((x) => x.delta || x.text).slice(0, c.improveText), total: g.improve.length },
+    single: { subjects: singleBySubject, total: singlePool.length },
+    improve: { top: withRange[0] || null, bars: withRange.slice(withRange[0] ? 1 : 0, c.improve + 1), texts: textOnly.filter((x) => x.delta || x.text).slice(0, c.improveText), total: g.improve.length },
     daily: { subjects: dailyBySubject, total: d.daily.length, teachers: d.stats.dailyTeachers },
   };
 }

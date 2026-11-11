@@ -153,10 +153,15 @@ function buildGaokao(materials) {
         break;
       }
       case '提分学员': {
-        const text = m.rawName.split('_').pop();
-        const ft = parseFromTo(text);
+        // 文件名笔误修正：“地理从50到提74分24” -> “地理从50到74提分24”
+        const text = m.rawName.split('_').pop().replace(/到提(\d{2,3})分(\d{1,3})/, '到$1提分$2');
+        // “总分从340提升到443”优先于前面的单科描述
+        const totalPart = text.match(/总分从?\d{3}.*$/);
+        const ft = parseFromTo(totalPart ? totalPart[0] : text);
         const delta = (ft && ft.delta) || m.improvementScore || parseDelta(text);
-        const subject = SUBJECTS.includes(m.subject) ? m.subject : (/总分|高考\d{3}|一模/.test(text) ? '总分' : null);
+        // 起止分超过 150 的一定是总分；“超强提分”目录下未标学科的也是总分
+        const isTotal = (ft && ft.to > 150) || !SUBJECTS.includes(m.subject) || /^总分/.test(text);
+        const subject = isTotal ? '总分' : m.subject;
         out.improve.push({ ...base, subject, ...(ft || {}), delta: delta || null, text });
         break;
       }

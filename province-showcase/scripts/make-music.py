@@ -150,6 +150,27 @@ def chime(m):
     return x * np.exp(-t * 3) * 0.12
 
 
+def lead(m, dur=0.42):
+    # 类拨弦主音色：基音 + 泛音，快速衰减
+    n = int(dur * SR)
+    t = t_(n)
+    f = mtof(m)
+    x = np.sin(2 * np.pi * f * t) + 0.5 * np.sin(2 * np.pi * 2 * f * t) * np.exp(-t * 9) + 0.25 * np.sin(2 * np.pi * 3 * f * t) * np.exp(-t * 14)
+    return x * env(n, 0.003, 0.16) * 0.3
+
+
+# C 大调五声：C5=72 D5=74 E5=76 G5=79 A5=81 C6=84；每小节 8 个八分音符
+MELODY = [
+    [76, 79, 81, 79, 76, 74, 72, 0],   # C
+    [74, 76, 79, 76, 74, 0, 67, 69],   # G
+    [72, 76, 81, 79, 76, 79, 81, 0],   # Am
+    [84, 81, 79, 76, 77, 0, 74, 72],   # F
+    [76, 79, 84, 81, 79, 76, 79, 0],   # C
+    [74, 79, 83, 79, 74, 76, 79, 0],   # G
+    [81, 84, 88, 84, 81, 79, 76, 79],  # Am
+    [77, 81, 84, 81, 79, 77, 76, 74],  # F
+]
+
 # ---------- 编曲 ----------
 PROG = [[60, 64, 67], [55, 59, 62, 67], [57, 60, 64], [53, 57, 60, 65]]  # C G Am F
 ROOT = [36, 43, 45, 41]
@@ -181,11 +202,16 @@ for b in range(nbars):
     for k in range(8):
         add(bass_note(ROOT[ci] + (12 if k % 2 else 0), BEAT / 2), t0 + k * BEAT / 2, 1.0)
     if not in_outro:
-        pat = rng.permutation(16)
-        for k in range(16):
-            if k % 4 == 3 and pat[k] % 2:
+        # 谱好的五声音阶主旋律（8 小节一循环，8 分音符网格，0 = 休止），带一次回声
+        mel = MELODY[b % len(MELODY)]
+        for k, m in enumerate(mel):
+            if not m:
                 continue
-            add(pluck(PENTA[(k * 3 + ci * 2 + (pat[k] % 2)) % len(PENTA)], 0.2), t0 + k * BEAT / 4, 0.9, pan=0.25 * (-1) ** k)
+            t = t0 + k * BEAT / 2
+            add(lead(m), t, 1.0, pan=-0.1)
+            add(lead(m), t + BEAT * 0.75, 0.3, pan=0.4)
+        for k in range(16):  # 轻量十六分琶音铺底
+            add(pluck(PROG[ci][k % len(PROG[ci])] + 12, 0.15), t0 + k * BEAT / 4, 0.35, pan=0.3 * (-1) ** k)
 
 # 结尾长和弦
 add(pad([48, 60, 64, 67, 72], 4.0), DUR - 4.2, 1.1)

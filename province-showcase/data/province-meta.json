@@ -5,18 +5,115 @@
     "tagline": "燕赵大地 · 英才辈出",
     "intro": "京畿要地，环抱京津，东临渤海",
     "capital": "石家庄市",
-    "highlightCities": ["石家庄市", "保定市", "唐山市", "秦皇岛市", "邯郸市", "衡水市", "承德市", "张家口市"],
+    "highlightCities": [
+      "石家庄市",
+      "保定市",
+      "唐山市",
+      "秦皇岛市",
+      "邯郸市",
+      "衡水市",
+      "承德市",
+      "张家口市"
+    ],
     "landmarks": [
-      { "name": "山海关", "city": "秦皇岛市", "icon": "gate" },
-      { "name": "避暑山庄", "city": "承德市", "icon": "pavilion" },
-      { "name": "赵州桥", "city": "石家庄市", "icon": "bridge" },
-      { "name": "白洋淀", "city": "保定市", "icon": "lotus" },
-      { "name": "崇礼雪场", "city": "张家口市", "icon": "mountain" }
+      {
+        "name": "山海关",
+        "city": "秦皇岛市",
+        "icon": "gate"
+      },
+      {
+        "name": "避暑山庄",
+        "city": "承德市",
+        "icon": "pavilion"
+      },
+      {
+        "name": "赵州桥",
+        "city": "石家庄市",
+        "icon": "bridge"
+      },
+      {
+        "name": "白洋淀",
+        "city": "保定市",
+        "icon": "lotus"
+      },
+      {
+        "name": "崇礼雪场",
+        "city": "张家口市",
+        "icon": "mountain"
+      }
     ],
     "universities": [
-      { "name": "河北大学", "city": "保定市" },
-      { "name": "燕山大学", "city": "秦皇岛市" },
-      { "name": "河北医科大学", "city": "石家庄市" }
+      {
+        "name": "河北大学",
+        "city": "保定市"
+      },
+      {
+        "name": "燕山大学",
+        "city": "秦皇岛市"
+      },
+      {
+        "name": "河北医科大学",
+        "city": "石家庄市"
+      }
+    ]
+  },
+  "河南": {
+    "fullName": "河南省",
+    "abbr": "豫",
+    "tagline": "中原大地 · 金榜题名",
+    "intro": "华夏之源，黄河之畔，天地之中",
+    "capital": "郑州市",
+    "highlightCities": [
+      "郑州市",
+      "洛阳市",
+      "开封市",
+      "南阳市",
+      "安阳市",
+      "新乡市",
+      "商丘市",
+      "信阳市"
+    ],
+    "landmarks": [
+      {
+        "name": "少林寺",
+        "city": "郑州市",
+        "icon": "temple"
+      },
+      {
+        "name": "龙门石窟",
+        "city": "洛阳市",
+        "icon": "grotto"
+      },
+      {
+        "name": "殷墟",
+        "city": "安阳市",
+        "icon": "ding"
+      },
+      {
+        "name": "开封铁塔",
+        "city": "开封市",
+        "icon": "pagoda"
+      },
+      {
+        "name": "黄河三门峡",
+        "city": "三门峡市",
+        "icon": "wave"
+      },
+      {
+        "name": "鸡公山",
+        "city": "信阳市",
+        "icon": "mountain"
+      }
+    ],
+    "universities": [
+      {
+        "name": "郑州大学",
+        "city": "郑州市"
+      },
+      {
+        "name": "河南大学",
+        "city": "开封市"
+      }
     ]
   }
 }

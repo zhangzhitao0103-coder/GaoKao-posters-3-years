@@ -9,7 +9,7 @@ const path = require('path');
 const { spawn, execFileSync } = require('child_process');
 const { chromium } = require('playwright');
 const { selectShowcase } = require('./lib/select');
-const { provinceSvg } = require('./lib/geo');
+const { buildMap, ICON } = require('./lib/mapdata');
 
 const ROOT = path.resolve(__dirname, '..');
 const FPS = 30;
@@ -17,60 +17,19 @@ const META = JSON.parse(fs.readFileSync(path.join(ROOT, 'data', 'province-meta.j
 const CLIPS = JSON.parse(fs.readFileSync(path.join(ROOT, 'data', 'clips.json'), 'utf8'));
 const fileUrl = (p) => `file://${path.join(ROOT, p)}`;
 
-// ---------- 地图标注布局（简单斥力迭代，避免标签重叠） ----------
-function layoutCallouts(items, geo) {
-  const cx = geo.width / 2;
-  const cy = geo.height / 2;
-  const nodes = items.map((it, i) => {
-    const dx = it.x - cx;
-    const dy = it.y - cy;
-    const len = Math.hypot(dx, dy) || 1;
-    const jitter = (i % 2 ? 1 : -1) * 0.35 * (items.filter((o) => o.city === it.city).indexOf(it));
-    const ang = Math.atan2(dy, dx) + jitter;
-    return { ...it, bx: it.x + Math.cos(ang) * 170, by: it.y + Math.sin(ang) * 140, w: 70 + [...it.name].length * 31, h: 66 };
-  });
-  for (let k = 0; k < 300; k += 1) {
-    for (const a of nodes) {
-      for (const b of nodes) {
-        if (a === b) continue;
-        const ox = (a.w + b.w) / 2 + 12 - Math.abs(a.bx - b.bx);
-        const oy = (a.h + b.h) / 2 + 12 - Math.abs(a.by - b.by);
-        if (ox > 0 && oy > 0) {
-          if (ox < oy * 1.5) a.bx += (a.bx < b.bx ? -1 : 1) * ox * 0.25;
-          else a.by += (a.by < b.by ? -1 : 1) * oy * 0.25;
-        }
-      }
-      a.bx = Math.max(a.w / 2 - 50, Math.min(geo.width + 50 - a.w / 2, a.bx));
-      a.by = Math.max(-60, Math.min(geo.height + 60, a.by));
-    }
-  }
-  return nodes;
-}
-
 function buildData(province) {
   const d = JSON.parse(fs.readFileSync(path.join(ROOT, 'data', 'provinces', `${province}.json`), 'utf8'));
   const meta = META[province] || { tagline: '', highlightCities: [], landmarks: [], universities: [] };
-  const sc = selectShowcase(d, { qingbei: 30, otherSchool: 5, total: 12, improve: 6, dailyPerSubject: 3 });
-  const geo = provinceSvg(province, 960, 960, 40);
-  const byName = (n) => geo.cities.find((c) => c.name === n || c.name.startsWith(n));
-  const cityDots = (meta.highlightCities || []).map((n) => byName(n)).filter(Boolean)
-    .map((c) => ({ name: c.name, x: c.center[0], y: c.center[1], capital: c.name === meta.capital }));
-  const items = [
-    ...(meta.landmarks || []).map((l) => ({ ...l, kind: 'land' })),
-    ...(meta.universities || []).map((u) => ({ ...u, kind: 'univ', icon: 'cap' })),
-  ].map((it) => {
-    const c = byName(it.city) || geo.cities[0];
-    return { name: it.name, kind: it.kind, icon: it.icon, city: it.city, x: c.center[0], y: c.center[1] };
-  });
-  const callouts = layoutCallouts(items, geo);
+  const sc = selectShowcase(d, { qingbei: 30, otherSchool: 5, total: 12, improve: 5, dailyPerSubject: 3 });
+  const geo = buildMap(province, meta, 960, 40, 1);
 
   const s = d.stats;
   const stats = [];
   if (s.champion) stats.push([s.champion, '位', '状元喜报']);
-  stats.push([s.qingbei || s.school, '人', s.qingbei ? '清北录取' : '名校录取']);
+  stats.push(s.qingbei ? [s.qingbei, '人', '清北录取'] : [s.school, '人', '名校录取']);
   stats.push([s.high600, '人', '高考 600 分+']);
+  if (!s.champion) stats.push([sc.single.total, '人次', '单科高分']);
   stats.push([s.improve + s.daily, '例', '提分喜报']);
-  if (stats.length < 4) stats.splice(1, 0, [s.single, '人次', '单科高分']);
 
   const clips = (CLIPS[province] || []).slice(0, 2).map((c) => {
     const v = d.videos.find((x) => x.id === c.id) || {};
@@ -78,17 +37,11 @@ function buildData(province) {
     const [w, h] = execFileSync('ffprobe', ['-v', 'error', '-select_streams', 'v:0', '-show_entries', 'stream=width,height', '-of', 'csv=p=0', file]).toString().trim().split(',').map(Number);
     const vertical = h > w;
     const rect = vertical ? { x: 170, y: 400, w: 740, h: 1316 } : { x: 50, y: 720, w: 980, h: 552 };
-    return { id: c.id, file, ss: c.ss, dur: c.dur, rect, label: c.label, name: v.name, score: v.score, school: v.school, srcW: w, srcH: h };
+    return { id: c.id, file, ss: c.ss, dur: c.dur, rect, label: c.label, quote: c.quote, name: v.name, score: v.score, school: v.school, srcW: w, srcH: h };
   });
 
   return {
-    province,
-    meta,
-    sc,
-    stats: stats.filter(([n]) => n > 0).slice(0, 4),
-    stats_raw: s,
-    geo: { width: geo.width, height: geo.height, cities: geo.cities.map((c) => ({ d: c.d })), cityDots, callouts },
-    clips,
+    province, meta, sc, stats: stats.filter(([n]) => n > 0).slice(0, 4), stats_raw: s, geo, icons: ICON, clips,
     logoWhite: fileUrl('assets/logo-white.png'),
   };
 }
@@ -101,7 +54,7 @@ ${css('node_modules/@fontsource/noto-serif-sc/900.css')}${css('node_modules/@fon
 ${css('templates/video.css')}
 </head><body><div id="stage"><div id="rays"></div><div id="pattern"></div>
 <img id="brand" src="${data.logoWhite}"><div id="tag"></div>
-<div id="scenes"></div><canvas id="fx" width="1080" height="1920"></canvas><div id="flash"></div><div id="fade"></div></div>
+<div id="scenes"></div><div id="wipe"></div><div id="prog"><i></i></div><canvas id="fx" width="1080" height="1920"></canvas><div id="flash"></div><div id="fade"></div></div>
 <script>window.DATA = ${JSON.stringify(data)};</script>
 <script src="${fileUrl('node_modules/gsap/dist/gsap.min.js')}"></script>
 <script src="${fileUrl('templates/video-stage.js')}"></script>
