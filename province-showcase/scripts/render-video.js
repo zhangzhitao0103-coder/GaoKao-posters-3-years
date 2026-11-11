@@ -20,7 +20,7 @@ const fileUrl = (p) => `file://${path.join(ROOT, p)}`;
 function buildData(province) {
   const d = JSON.parse(fs.readFileSync(path.join(ROOT, 'data', 'provinces', `${province}.json`), 'utf8'));
   const meta = META[province] || { tagline: '', highlightCities: [], landmarks: [], universities: [] };
-  const sc = selectShowcase(d, { qingbei: 30, otherSchool: 5, total: 12, improve: 5, dailyPerSubject: 3 });
+  const sc = selectShowcase(d, { qingbei: 30, otherSchool: 3, total: 12, improve: 5, dailyPerSubject: 3 });
   const geo = buildMap(province, meta, 960, 40, 1);
 
   const s = d.stats;

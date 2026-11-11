@@ -3,7 +3,7 @@ const SUBJECTS = ['语文', '数学', '英语', '物理', '化学', '生物', '�
 
 function selectShowcase(d, caps = {}) {
   const c = {
-    qingbei: 40, otherSchool: 16, total: 12, singlePerSubject: 3, improve: 6, improveText: 4, dailyPerSubject: 3,
+    qingbei: 40, otherSchool: 5, total: 11, singlePerSubject: 3, improve: 5, improveText: 3, dailyPerSubject: 3,
     ...caps,
   };
   const g = d.gaokao;
@@ -32,11 +32,21 @@ function selectShowcase(d, caps = {}) {
     const m = h.match(/^(\D+)([\d.]+)$/);
     return m ? { name: x.name, year: x.year, subject: m[1], score: Number(m[2]), totalScore: x.totalScore } : null;
   }).filter(Boolean));
-  const singlePool = [...g.single, ...absorbed].sort((a, b) => b.score - a.score);
+  // 同一人同科同分只保留一条（单科记录与高档卡片的单科亮点可能重复）
+  const seenSingle = new Set();
+  const singlePool = [...g.single, ...absorbed]
+    .sort((a, b) => b.score - a.score || (a.name ? 0 : 1) - (b.name ? 0 : 1))
+    .filter((x) => {
+      if (!x.name) return true;
+      const k = `${x.name}|${x.subject}|${x.score}`;
+      if (seenSingle.has(k)) return false;
+      seenSingle.add(k);
+      return true;
+    });
   const singleBySubject = SUBJECTS.map((s) => {
     const list = singlePool.filter((x) => x.subject === s);
-    const named = list.filter((x) => x.name);
-    return { subject: s, count: list.length, people: [...named, ...list.filter((x) => !x.name)].slice(0, c.singlePerSubject) };
+    // 严格按分数排序，同分时有姓名的在前
+    return { subject: s, count: list.length, people: list.slice(0, c.singlePerSubject) };
   }).filter((x) => x.people.length);
 
   // 高考提分：有起止分的画条形，其余作为文字标签
