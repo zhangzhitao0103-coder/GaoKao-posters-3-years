@@ -74,7 +74,6 @@ function selectShowcase(d, caps = {}) {
   if (bestSingle) facts.push({ label: `单科最高 · ${bestSingle.subject}`, value: bestSingle.score, unit: '分' });
   const maxGain = Math.max(withRange[0]?.delta || 0, dailyRanged[0]?.delta || 0, g.improve[0]?.delta || 0);
   if (maxGain) facts.push({ label: '最高提分', value: maxGain, unit: '分', prefix: '+' });
-  if (d.stats.dailyTeachers) facts.push({ label: '提分名师', value: d.stats.dailyTeachers, unit: '位' });
 
   // 日常提分之星：前三（尽量不同老师）
   const dailyTop = [];

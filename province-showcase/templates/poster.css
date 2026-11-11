@@ -281,3 +281,7 @@ body { font-family: var(--sans); color: var(--ink); -webkit-font-smoothing: anti
 .starc-ft b { color: var(--gold-300); font-weight: 600; }
 .starc-t { font-size: 26px; color: var(--gold-100); margin-top: 4px; }
 .imp-lab.tight { transform: translate(-125%, -50%); }
+.stats { display: flex; justify-content: center; }
+.stats .stat { flex: 0 1 340px; }
+.facts { gap: 22px; }
+.hero-mid { margin-top: 80px; }
