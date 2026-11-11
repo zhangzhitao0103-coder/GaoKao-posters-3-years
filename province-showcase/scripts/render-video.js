@@ -24,12 +24,8 @@ function buildData(province) {
   const geo = buildMap(province, meta, 960, 40, 1);
 
   const s = d.stats;
-  const stats = [];
-  if (s.champion) stats.push([s.champion, '位', '状元喜报']);
-  stats.push(s.qingbei ? [s.qingbei, '人', '清北录取'] : [s.school, '人', '名校录取']);
-  stats.push([s.high600, '人', '高考 600 分+']);
-  if (!s.champion) stats.push([sc.single.total, '人次', '单科高分']);
-  stats.push([s.improve + s.daily, '例', '提分喜报']);
+  // 只展示 状元 / 清北录取 / 高考600+ 三项中有数据的，不用其他内容补位
+  const stats = [[s.champion, '位', '状元喜报'], [s.qingbei, '人', '清北录取'], [s.high600, '人', '高考 600 分+']];
 
   const clips = (CLIPS[province] || []).slice(0, 2).map((c) => {
     const v = d.videos.find((x) => x.id === c.id) || {};

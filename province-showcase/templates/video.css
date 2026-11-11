@@ -259,3 +259,6 @@ body { font-family: var(--sans); color: #fff; -webkit-font-smoothing: antialiase
 .out-ring { position: absolute; left: 240px; top: 506px; width: 600px; height: 600px; border-radius: 50%; border: 6px solid rgba(255, 226, 150, .8); }
 .intro-tagline { top: 1650px; }
 .intro-title { top: 150px; }
+.stats { display: flex; justify-content: center; flex-wrap: wrap; }
+.stats .stat { flex: 0 1 440px; }
+.qb-chip.qb-more { font-size: 40px; }

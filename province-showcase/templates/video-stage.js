@@ -131,7 +131,7 @@
     SCHEDULE.impacts.push(t0);
     flash(t0, 0.85);
     tl.set([brand, tag, '#prog'], { autoAlpha: 1 }, t0);
-    el('div', 'tt-years', '2024 – 2026', root);
+    el('div', 'tt-years', '优秀学员喜报', root);
     el('div', 'tt-prov', chars(D.province, 'pc'), root);
     el('div', 'tt-main', chars('优秀学员荣耀榜'), root);
     el('div', 'tt-ribbon', '<span>高考喜报 · 日常提分</span>', root);
@@ -199,7 +199,7 @@
     scene('school', few ? 7 : 8, (root, t0) => {
       SCHEDULE.impacts.push(t0);
       flash(t0);
-      header(root, t0, 'PART 01 · 高考喜报', '名校录取榜', `${D.stats_raw.qingbei ? `清北 <b>${D.stats_raw.qingbei}</b> 人 · ` : ''}名校共 <b>${D.stats_raw.school}</b> 人`);
+      header(root, t0, 'PART 01 · 高考喜报', '名校录取榜', '金榜题名 · 圆梦名校');
       if (few) {
         // 一人一张录取通知书，依次翻开
         const list = el('div', 'tickets', null, root);
@@ -216,7 +216,7 @@
       const wrap = el('div', 'school-wrap', null, root);
       let at = t0 + 0.9;
       D.sc.qingbei.groups.forEach((g) => {
-        const blk = el('div', 'qb-blk', `<div class="qb-seal">${esc(g.school)}<small>${g.total}人</small></div><div class="qb-chips">${g.people.map((p) => `<span class="qb-chip">${esc(p.name || '学员')}${p.totalScore ? `<em>${p.totalScore}</em>` : ''}</span>`).join('')}${g.total > g.people.length ? `<span class="qb-chip qb-more">等${g.total}人</span>` : ''}</div>`, wrap);
+        const blk = el('div', 'qb-blk', `<div class="qb-seal">${esc(g.school)}</div><div class="qb-chips">${g.people.map((p) => `<span class="qb-chip">${esc(p.name || '学员')}${p.totalScore ? `<em>${p.totalScore}</em>` : ''}</span>`).join('')}${g.total > g.people.length ? '<span class="qb-chip qb-more">……</span>' : ''}</div>`, wrap);
         tl.from($('.qb-seal', blk), { scale: 2.4, autoAlpha: 0, duration: 0.35, ease: 'power4.in' }, at);
         SCHEDULE.chimes.push(at + 0.3);
         tl.from(blk.querySelectorAll('.qb-chip'), { autoAlpha: 0, y: -50, scale: 0.6, stagger: { each: 0.03, from: 'start' }, duration: 0.35, ease: 'back.out(2)' }, at + 0.3);
@@ -226,6 +226,7 @@
         const os = el('div', 'os-list', D.sc.otherSchool.groups.map((g) => `<div class="os-row"><b>${esc(g.school)}</b><span>${g.people.map((p) => esc(p.name || '学员')).join(' · ')}</span></div>`).join(''), wrap);
         tl.from(os.querySelectorAll('.os-row'), { x: -700, autoAlpha: 0, stagger: 0.12, duration: 0.45 }, at);
       }
+      moreLine(root, t0 + 6.2, D.sc.qingbei.total + D.sc.otherSchool.total > D.sc.qingbei.shown + D.sc.otherSchool.shown);
       tl.fromTo(wrap.querySelectorAll('.qb-chip'), { backgroundPosition: '-150% 0' }, { backgroundPosition: '150% 0', duration: 1.0, stagger: 0.01, ease: 'none', immediateRender: false }, t0 + 5.6);
     }, { chapter: '高考喜报' });
   }
@@ -256,7 +257,7 @@
     scene('total', 8, (root, t0) => {
       SCHEDULE.impacts.push(t0);
       flash(t0);
-      header(root, t0, 'PART 01 · 高考喜报', '总分高分榜', `600分+ 学员 <b>${D.stats_raw.high600}</b> 人`);
+      header(root, t0, 'PART 01 · 高考喜报', '总分高分榜', '高分频出 · 实力见证');
       const ppl = D.sc.total.people;
       const pod = el('div', 'podium', null, root);
       [1, 0, 2].forEach((k, j) => {
@@ -276,7 +277,7 @@
         countTo($('b', tile), p.totalScore, t0 + 3.1 + i * 0.12, 0.9, p.totalScore - 120);
       });
       if (D.sc.total.total > ppl.length) {
-        const m = el('div', 'more', `…… 等 <b>${D.sc.total.total}</b> 位高分学员`, root);
+        const m = el('div', 'more', '…… 更多学员未展示', root);
         tl.from(m, { autoAlpha: 0, duration: 0.4 }, t0 + 5.6);
       }
     }, { chapter: '高考喜报' });
@@ -287,7 +288,7 @@
     scene('single', 6.5, (root, t0) => {
       SCHEDULE.impacts.push(t0);
       flash(t0);
-      header(root, t0, 'PART 01 · 高考喜报', '单科高分榜', `单科高分 <b>${D.sc.single.total}</b> 人次`);
+      header(root, t0, 'PART 01 · 高考喜报', '单科高分榜', '各科高分 · 全面开花');
       const grid = el('div', `sg-grid n${D.sc.single.subjects.length}`, null, root);
       D.sc.single.subjects.forEach((s, i) => {
         const top = s.people[0];
@@ -302,7 +303,14 @@
         countTo($('.sg-score b', card), top.score, t0 + 1.1 + i * 0.13, 1.0, Math.round(top.score * 0.5));
         if (hot) tl.fromTo(card, { boxShadow: '0 0 0 4px #edb95a, 0 0 0 0 rgba(255,215,120,0)' }, { boxShadow: '0 0 0 4px #edb95a, 0 0 60px 10px rgba(255,215,120,.85)', duration: 0.4, yoyo: true, repeat: 3, immediateRender: false }, t0 + 2.6 + i * 0.05);
       });
+      moreLine(root, t0 + 3.6, D.sc.single.total > D.sc.single.subjects.length);
     }, { chapter: '高考喜报' });
+  }
+
+  function moreLine(root, at, show) {
+    if (!show) return;
+    const m = el('div', 'more', '…… 更多学员未展示', root);
+    tl.from(m, { autoAlpha: 0, duration: 0.4 }, at);
   }
 
   // ---------- 7. 高考提分榜 ----------
@@ -311,7 +319,7 @@
     scene('improve', 7.5, (root, t0) => {
       SCHEDULE.impacts.push(t0);
       flash(t0);
-      header(root, t0, 'PART 01 · 高考喜报', '高考提分榜', `高考提分 <b>${D.sc.improve.total}</b> 例`);
+      header(root, t0, 'PART 01 · 高考喜报', '高考提分榜', '逆袭提分 · 高考圆梦');
       let listAt = t0 + 0.9;
       if (top) {
         const f = el('div', 'feat', `<div class="feat-tag">高考提分之最 · ${esc(top.subject || '总分')}</div>
@@ -328,7 +336,7 @@
         listAt = t0 + 3.0;
       }
       const list = el('div', `imp-list ${top ? 'with-feat' : ''}`, null, root);
-      D.sc.improve.bars.slice(0, top ? 5 : 6).forEach((x, i) => {
+      D.sc.improve.bars.slice(0, top ? 4 : 6).forEach((x, i) => {
         const max = fullOf(x);
         const a = (x.from / max) * 100;
         const b = (x.to / max) * 100;
@@ -344,6 +352,7 @@
         countTo($('.imp-to b', row), x.to, at + 0.25, 0.8, x.from);
         tl.from($('.imp-d', row), { scale: 0, autoAlpha: 0, duration: 0.35, ease: 'back.out(3)' }, at + 0.95);
       });
+      moreLine(root, t0 + 5.6, D.sc.improve.total > (top ? 1 : 0) + Math.min(D.sc.improve.bars.length, top ? 4 : 6));
     }, { chapter: '高考喜报' });
   }
 
@@ -358,13 +367,10 @@
     scene('daily', 2.4 + starDur + pages.length * per + 0.5, (root, t0) => {
       SCHEDULE.impacts.push(t0);
       flash(t0, 0.8);
-      const intro = el('div', 'dl-intro', `<div class="dl-part">PART 02</div><div class="dl-title">${chars('日常提分喜报')}</div><div class="dl-sub"><b>0</b> 位主讲老师 · <b>0</b> 例${esc(D.province)}学员日常提分</div>`, root);
+      const intro = el('div', 'dl-intro', `<div class="dl-part">PART 02</div><div class="dl-title">${chars('日常提分喜报')}</div><div class="dl-sub">各学科 · 各主讲老师 · ${esc(D.province)}学员日常提分</div>`, root);
       tl.from($('.dl-part', intro), { autoAlpha: 0, letterSpacing: '50px', duration: 0.5 }, t0 + 0.1);
       tl.from(intro.querySelectorAll('.dl-title .ch'), { y: 120, autoAlpha: 0, stagger: 0.06, duration: 0.45, ease: 'back.out(2)' }, t0 + 0.2);
-      const bs = intro.querySelectorAll('.dl-sub b');
-      tl.from($('.dl-sub', intro), { autoAlpha: 0, duration: 0.3 }, t0 + 0.8);
-      countTo(bs[0], D.sc.daily.teachers, t0 + 0.8, 1.0);
-      countTo(bs[1], D.sc.daily.total, t0 + 0.8, 1.2);
+      tl.from($('.dl-sub', intro), { autoAlpha: 0, y: 20, duration: 0.4 }, t0 + 0.8);
       tl.to(intro, { y: -560, scale: 0.62, duration: 0.6, ease: 'power3.inOut' }, t0 + 2.0);
       if (stars.length) {
         const box = el('div', 'stars', '<div class="stars-h">提分之星 TOP 3</div>', root);
@@ -384,7 +390,7 @@
         const at = t0 + 2.4 + starDur + pi * per;
         const box = el('div', 'dl-page', null, root);
         pg.forEach((s, j) => {
-          const card = el('div', 'dl-card', `<div class="dl-h"><span>${s.subject}</span><small>${s.teachers}位老师 · ${s.count}例</small></div>${s.cases.map((x) => `<div class="dl-row"><span class="dl-t">${esc(x.teacher)}<small>老师</small></span><span class="dl-ft">${x.from}<i>→</i><b>${x.from}</b></span><span class="dl-d">↑${x.delta}</span></div>`).join('')}`, box);
+          const card = el('div', 'dl-card', `<div class="dl-h"><span>${s.subject}</span></div>${s.cases.map((x) => `<div class="dl-row"><span class="dl-t">${esc(x.teacher)}<small>老师</small></span><span class="dl-ft">${x.from}<i>→</i><b>${x.from}</b></span><span class="dl-d">↑${x.delta}</span></div>`).join('')}`, box);
           tl.from(card, { x: 1100, duration: 0.5, ease: 'power3.out' }, at + j * 0.12);
           card.querySelectorAll('.dl-row').forEach((row, k) => {
             const x = s.cases[k];
@@ -395,7 +401,7 @@
         });
         SCHEDULE.whoosh.push(at);
       });
-      const more = el('div', 'more dl-more', `…… 共 <b>${D.sc.daily.total}</b> 例日常提分`, root);
+      const more = el('div', 'more dl-more', '…… 更多学员未展示', root);
       tl.from(more, { autoAlpha: 0, duration: 0.4 }, t0 + 2.4 + starDur + (pages.length - 1) * per + 1.2);
     }, { chapter: '日常提分' });
   }
