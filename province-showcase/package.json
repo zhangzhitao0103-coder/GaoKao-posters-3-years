@@ -1,0 +1,17 @@
+{
+  "name": "province-showcase",
+  "private": true,
+  "description": "31省优秀学员荣耀榜：数据清洗、海报与视频批量生成",
+  "scripts": {
+    "data": "node scripts/build-data.js && python3 scripts/export-excel.py",
+    "poster": "node scripts/render-poster.js",
+    "video": "node scripts/render-video.js"
+  },
+  "dependencies": {
+    "@fontsource/ma-shan-zheng": "^5.3.1",
+    "@fontsource/noto-sans-sc": "^5.3.1",
+    "@fontsource/noto-serif-sc": "^5.3.1",
+    "@fontsource/oswald": "^5.3.0",
+    "gsap": "^3.12.5"
+  }
+}

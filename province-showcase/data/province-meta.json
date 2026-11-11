@@ -1,0 +1,22 @@
+{
+  "河北": {
+    "fullName": "河北省",
+    "abbr": "冀",
+    "tagline": "燕赵大地 · 英才辈出",
+    "intro": "京畿要地，环抱京津，东临渤海",
+    "capital": "石家庄市",
+    "highlightCities": ["石家庄市", "保定市", "唐山市", "秦皇岛市", "邯郸市", "衡水市", "承德市", "张家口市"],
+    "landmarks": [
+      { "name": "山海关", "city": "秦皇岛市", "icon": "gate" },
+      { "name": "避暑山庄", "city": "承德市", "icon": "pavilion" },
+      { "name": "赵州桥", "city": "石家庄市", "icon": "bridge" },
+      { "name": "白洋淀", "city": "保定市", "icon": "lotus" },
+      { "name": "崇礼雪场", "city": "张家口市", "icon": "mountain" }
+    ],
+    "universities": [
+      { "name": "河北大学", "city": "保定市" },
+      { "name": "燕山大学", "city": "秦皇岛市" },
+      { "name": "河北医科大学", "city": "石家庄市" }
+    ]
+  }
+}
