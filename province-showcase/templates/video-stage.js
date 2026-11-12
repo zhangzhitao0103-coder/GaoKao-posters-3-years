@@ -20,7 +20,7 @@
   const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const chars = (s, cls = 'ch') => [...String(s)].map((c) => `<span class="${cls}">${c === ' ' ? '&nbsp;' : esc(c)}</span>`).join('');
   const FULL = { 语文: 150, 数学: 150, 英语: 150 };
-  const fullOf = (x) => (x.subject === '总分' || x.to > 150 ? 750 : (FULL[x.subject] || (x.to > 100 ? 150 : 100)));
+  const fullOf = (x) => (/综$/.test(x.subject || '') ? 300 : x.subject === '总分' || x.to > 150 ? 750 : (FULL[x.subject] || (x.to > 100 ? 150 : 100)));
   const icon = (k) => `<svg viewBox="0 0 48 48" class="ico">${D.icons[k] || D.icons.temple}</svg>`;
   const CROWN = '<svg viewBox="0 0 48 48"><path d="M6 36 3 14l12 9 9-15 9 15 12-9-3 22z" fill="currentColor"/><rect x="6" y="38" width="36" height="5" rx="2" fill="currentColor"/></svg>';
 
@@ -147,7 +147,7 @@
 
     const scale = 960 / g.width;
     g.cityDots.forEach((c, i) => {
-      const dot = el('div', `cdot ${c.capital ? 'cap' : ''}`, `<i></i><em></em><span>${esc(c.name.replace(/市$/, ''))}</span>`, map);
+      const dot = el('div', `cdot ${c.capital ? 'cap' : ''}`, `<i></i><em></em><span>${esc(c.short)}</span>`, map);
       dot.style.left = `${c.x * scale}px`;
       dot.style.top = `${c.y * scale}px`;
       gsap.set(dot, { xPercent: -50, yPercent: -30 });

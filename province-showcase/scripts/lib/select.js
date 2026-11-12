@@ -3,7 +3,7 @@ const SUBJECTS = ['语文', '数学', '英语', '物理', '化学', '生物', '�
 
 function selectShowcase(d, caps = {}) {
   const c = {
-    qingbei: 40, otherSchool: 5, total: 11, singlePerSubject: 3, improve: 5, improveText: 3, dailyPerSubject: 3, dailyPerGroup: 8,
+    qingbei: 28, otherSchool: 6, total: 11, singlePerSubject: 3, improve: 5, improveText: 3, dailyPerSubject: 3, dailyPerGroup: 8,
     ...caps,
   };
   const g = d.gaokao;
@@ -34,7 +34,9 @@ function selectShowcase(d, caps = {}) {
   }).filter(Boolean));
   // 同一人同科同分只保留一条（单科记录与高档卡片的单科亮点可能重复）
   const seenSingle = new Set();
-  const singlePool = [...g.single, ...absorbed]
+  // 超过常规满分（语数英 150、其余 100）的单科分属于其他计分制（海南标准分、旧理综等），不进单科榜
+  const fullOf = (x) => (['语文', '数学', '英语'].includes(x.subject) ? 150 : 100);
+  const singlePool = [...g.single, ...absorbed].filter((x) => x.score <= fullOf(x))
     .sort((a, b) => b.score - a.score || (a.name ? 0 : 1) - (b.name ? 0 : 1))
     .filter((x) => {
       if (!x.name) return true;

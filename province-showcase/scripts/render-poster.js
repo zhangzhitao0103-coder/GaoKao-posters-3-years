@@ -17,7 +17,7 @@ const fileUrl = (p) => `file://${path.join(ROOT, p)}`;
 
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const FULL = { 语文: 150, 数学: 150, 英语: 150 };
-const fullOf = (x) => (x.subject === '总分' || x.to > 150 ? 750 : (FULL[x.subject] || (x.to > 100 ? 150 : 100)));
+const fullOf = (x) => (/综$/.test(x.subject || '') ? 300 : x.subject === '总分' || x.to > 150 ? 750 : (FULL[x.subject] || (x.to > 100 ? 150 : 100)));
 
 const ICON = {
   crown: '<svg viewBox="0 0 48 48"><path d="M6 36 3 14l12 9 9-15 9 15 12-9-3 22z" fill="currentColor"/><rect x="6" y="38" width="36" height="5" rx="2" fill="currentColor"/></svg>',
@@ -48,7 +48,7 @@ function heroMap(province, meta) {
   let m;
   try { m = buildMap(province, meta, 600, 24, 0.74); } catch { return ''; }
   const lines = m.callouts.map((c) => `<line x1="${c.x.toFixed(1)}" y1="${c.y.toFixed(1)}" x2="${c.bx.toFixed(1)}" y2="${c.by.toFixed(1)}"/>`).join('');
-  const dots = m.cityDots.map((c) => `<div class="mdot ${c.capital ? 'cap' : ''}" style="left:${c.x}px;top:${c.y}px"><i></i><span>${esc(c.name.replace(/市$/, ''))}</span></div>`).join('');
+  const dots = m.cityDots.map((c) => `<div class="mdot ${c.capital ? 'cap' : ''}" style="left:${c.x}px;top:${c.y}px"><i></i><span>${esc(c.short)}</span></div>`).join('');
   const tags = m.callouts.map((c) => `<div class="mtag ${c.kind}" style="left:${c.bx}px;top:${c.by}px">${iconSvg(c.icon)}<span>${esc(c.name)}</span></div>`).join('');
   return `<div class="hmap"><svg viewBox="0 0 ${m.width} ${m.height}">
     <defs><linearGradient id="mf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe7a8" stop-opacity=".55"/><stop offset="1" stop-color="#d4973a" stop-opacity=".22"/></linearGradient></defs>
@@ -68,7 +68,7 @@ function championBlock(sc) {
       <div class="champ-row"><span class="champ-score">${esc(c.scoreText.replace('分', ''))}<i>${/\d/.test(c.scoreText) ? '分' : ''}</i></span><span class="champ-school">${esc(c.school)}</span></div>
       ${c.highlights?.length ? `<div class="champ-hl">${c.highlights.map((h) => `<span>${esc(h)}</span>`).join('')}</div>` : ''}
     </div>`).join('');
-  return `<section class="block">${subHeader('crown', '状元榜', '高考荣耀巅峰')}<div class="champ-grid ${big ? 'one' : ''}">${cards}</div></section>`;
+  return `<section class="block">${subHeader('crown', '状元榜', '高考荣耀巅峰')}<div class="champ-grid ${big ? 'one' : ''} ${sc.champion.length >= 5 ? 'three' : ''}">${cards}</div></section>`;
 }
 
 function schoolBlock(sc) {
@@ -118,7 +118,8 @@ function totalBlock(sc) {
 }
 
 function singleBlock(sc) {
-  if (!sc.single.subjects.length) return '';
+  // 不足 3 个学科时内容太单薄，不单独成板块
+  if (sc.single.subjects.length < 3) return '';
   const cards = sc.single.subjects.map((s) => `
     <div class="subj">
       <div class="subj-h"><span class="subj-name">${s.subject}</span></div>
@@ -182,8 +183,9 @@ function wallStrip(province) {
   const dir = path.join(ROOT, 'cache', 'wall', province);
   if (!fs.existsSync(dir)) return '';
   const files = fs.readdirSync(dir).filter((f) => /\.(webp|jpg|png)$/.test(f)).sort((a, b) => parseInt(a, 10) - parseInt(b, 10));
-  // 取状元、清北、高分、单科各类靠前的 6 张
-  const pick = [0, 1, 3, 9, 11, 14].map((i) => files[i]).filter(Boolean);
+  // 在前 16 张里均匀取 6 张（文件按 状元→清北→名校→高分→单科→提分 排好）
+  const n = Math.min(files.length, 16);
+  const pick = n <= 6 ? files.slice(0, n) : [0, 1, 2, 3, 4, 5].map((i) => files[Math.round((i * (n - 1)) / 5)]);
   if (pick.length < 4) return '';
   return `<div class="wall"><div class="wall-h"><span>真实喜报</span><i>学员喜报原图 · 部分展示</i></div><div class="wall-imgs">${pick.map((f, i) => `<img src="file://${path.join(dir, f)}" style="transform:rotate(${[-2, 1.5, -1, 2, -1.5, 1][i]}deg)">`).join('')}</div></div>`;
 }

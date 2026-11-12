@@ -109,6 +109,9 @@ function addHighlights(card, singles, skipSubject) {
   }
 }
 
+// 各省高考满分（海南标准分 900，上海 660，其余 750）
+const MAX_TOTAL = (prov) => (prov === '海南' ? 900 : prov === '上海' ? 660 : 750);
+
 // ---------- 喜报库 ----------
 function buildGaokao(materials) {
   const out = { champion: [], school: [], total: [], single: [], improve: [] };
@@ -163,7 +166,9 @@ function buildGaokao(materials) {
       }
       case '超高分喜报': {
         const name = nameOf();
-        if (!m.totalScore || m.totalScore < 300) break;
+        // 文件名把总分和排名连写（如 678528 = 678 分 + 排名 528）时，取前三位
+        if (m.totalScore > 999) m.totalScore = Number(String(m.totalScore).slice(0, 3));
+        if (!m.totalScore || m.totalScore < 300 || m.totalScore > MAX_TOTAL(prov)) break;
         const card = { ...base, rawName: name, name: maskName(name), totalScore: m.totalScore };
         addHighlights(card, ex.singles);
         out.total.push(card);
@@ -199,12 +204,16 @@ function buildGaokao(materials) {
         const text = m.rawName.split('_').pop().replace(/到提(\d{2,3})分(\d{1,3})/, '到$1提分$2');
         // “总分从340提升到443”优先于前面的单科描述
         const totalPart = text.match(/总分从?\d{3}.*$/);
-        const ft = parseFromTo(totalPart ? totalPart[0] : text);
+        // 理综/文综（满分 300）单独标注，不算总分
+        const zong = text.match(/(理综|文综)从?\d/);
+        let ft = parseFromTo(zong ? text.slice(zong.index) : (totalPart ? totalPart[0] : text));
         let delta = (ft && ft.delta) || m.improvementScore || parseDelta(text);
         if (!delta && ex.gain) { delta = ex.gain; bump('喜报-补充提分值'); }
         // 起止分超过 150 的一定是总分；“超强提分”目录下未标学科的也是总分
-        const isTotal = (ft && ft.to > 150) || !SUBJECTS.includes(m.subject) || /^总分/.test(text);
-        const subject = isTotal ? '总分' : m.subject;
+        const isTotal = (ft && ft.to > 150) || !SUBJECTS.includes(m.subject) || /^总分|总分提升|全科/.test(text);
+        const subject = zong ? zong[1] : (isTotal ? '总分' : m.subject);
+        // 标成总分但起止分不到 150 的，多半是文件名里混了单科分，不画条形，只保留文字
+        if (subject === '总分' && ft && ft.to <= 150) ft = null;
         out.improve.push({ ...base, subject, ...(ft || {}), delta: delta || null, text });
         break;
       }
@@ -223,7 +232,10 @@ function buildDaily(caseData) {
     for (const band of t.scoreBands) {
       for (const c of band.cases) {
         const text = c.scoreText || c.name.split('_').slice(2).join('_');
-        const ft = parseFromTo(text);
+        // 名次类（“排名进步700多名”）不是分数；起止分超过 150 的是总分，不放进单科提分
+        const isRank = /名|排名/.test(text);
+        let ft = isRank ? null : parseFromTo(text);
+        if (ft && ft.to > 150) ft = null;
         let prov = matchProvince(c.province);
         let provinceFrom;
         const ex = ft ? EXTRA.daily.filter((x) => x.subject === t.subject && x.from === ft.from && x.to === ft.to) : [];
@@ -247,7 +259,8 @@ function buildDaily(caseData) {
           student,
           provinceFrom,
           ...(ft || {}),
-          delta: (ft && ft.delta) || parseDelta(text),
+          // 没有起止分时：名次、“喜提X分”（指考到X分）、单科提升超过 60 的都不当作提分值
+          delta: (ft && ft.delta) || (isRank || /喜提/.test(text) || (parseDelta(text) || 0) > 60 ? null : parseDelta(text)),
           text: text.replace(/_[0-9a-f]{8,}$/, ''),
           image: c.previewUrl || c.imageUrl,
         });
@@ -366,6 +379,30 @@ function main() {
   const videos = loadWindow(SRC.videos).VIDEO_DATA;
 
   const g = mergePeople(buildGaokao(posters));
+  // 同一人多张图只保留一条：总分榜按 省+届+姓名+总分，名校榜按 省+届+姓名+学校
+  const dedupe = (list, keyOf) => {
+    const seen = new Set();
+    return list.filter((x) => {
+      if (!x.name) return true;
+      const k = keyOf(x);
+      if (seen.has(k)) return false;
+      seen.add(k);
+      return true;
+    });
+  };
+  g.total = dedupe(g.total, (x) => `${x.province}|${x.year}|${x.name}|${x.totalScore}`);
+  g.school = dedupe(g.school, (x) => `${x.province}|${x.year}|${x.name}|${x.school}`);
+  // 单科亮点里超过常规满分的（海南标准分、旧理综等）不展示
+  for (const list of [g.champion, g.school, g.total]) {
+    for (const x of list) {
+      if (!x.highlights) continue;
+      x.highlights = [...new Set(x.highlights)].filter((h) => {
+        const m = h.match(/^(\D+)([\d.]+)$/);
+        return m && Number(m[2]) <= (['语文', '数学', '英语'].includes(m[1]) ? 150 : 100);
+      });
+      if (!x.highlights.length) delete x.highlights;
+    }
+  }
   sortAll(g);
   const daily = buildDaily(cases).sort((a, b) => (b.delta || 0) - (a.delta || 0));
   const vids = buildVideos(videos);

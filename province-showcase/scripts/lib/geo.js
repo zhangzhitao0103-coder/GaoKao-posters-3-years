@@ -19,7 +19,8 @@ function loadGeo(province) {
  */
 function provinceSvg(province, width = 1000, height = 1000, pad = 40, opts = {}) {
   const geo = loadGeo(province);
-  const feats = geo.features.filter((f) => f.geometry && f.properties.name);
+  // 三沙市（南海诸岛）跨度太大，会把海南岛压得很小，版面上不计入
+  const feats = geo.features.filter((f) => f.geometry && f.properties.name && f.properties.name !== '三沙市');
   const polys = (f) => (f.geometry.type === 'Polygon' ? [f.geometry.coordinates] : f.geometry.coordinates);
   let minX = Infinity; let maxX = -Infinity; let minY = Infinity; let maxY = -Infinity;
   const lat0 = feats.reduce((s, f) => s + (f.properties.center ? f.properties.center[1] : 0), 0) / feats.length;

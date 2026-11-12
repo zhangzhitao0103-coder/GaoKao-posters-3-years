@@ -1,119 +1,1614 @@
 {
-  "河北": {
-    "fullName": "河北省",
-    "abbr": "冀",
-    "tagline": "燕赵大地 · 英才辈出",
-    "intro": "京畿要地，环抱京津，东临渤海",
-    "capital": "石家庄市",
-    "highlightCities": [
-      "石家庄市",
-      "保定市",
-      "唐山市",
-      "秦皇岛市",
-      "邯郸市",
-      "衡水市",
-      "承德市",
-      "张家口市"
-    ],
-    "landmarks": [
-      {
-        "name": "山海关",
-        "city": "秦皇岛市",
-        "icon": "gate"
-      },
-      {
-        "name": "避暑山庄",
-        "city": "承德市",
-        "icon": "pavilion"
-      },
-      {
-        "name": "赵州桥",
-        "city": "石家庄市",
-        "icon": "bridge"
-      },
-      {
-        "name": "白洋淀",
-        "city": "保定市",
-        "icon": "lotus"
-      },
-      {
-        "name": "崇礼雪场",
-        "city": "张家口市",
-        "icon": "mountain"
-      }
-    ],
-    "universities": [
-      {
-        "name": "河北大学",
-        "city": "保定市"
-      },
-      {
-        "name": "燕山大学",
-        "city": "秦皇岛市"
-      },
-      {
-        "name": "河北医科大学",
-        "city": "石家庄市"
-      }
-    ]
-  },
-  "河南": {
-    "fullName": "河南省",
-    "abbr": "豫",
-    "tagline": "中原大地 · 金榜题名",
-    "intro": "华夏之源，黄河之畔，天地之中",
-    "capital": "郑州市",
-    "highlightCities": [
-      "郑州市",
-      "洛阳市",
-      "开封市",
-      "南阳市",
-      "安阳市",
-      "新乡市",
-      "商丘市",
-      "信阳市"
-    ],
-    "landmarks": [
-      {
-        "name": "少林寺",
-        "city": "郑州市",
-        "icon": "temple"
-      },
-      {
-        "name": "龙门石窟",
-        "city": "洛阳市",
-        "icon": "grotto"
-      },
-      {
-        "name": "殷墟",
-        "city": "安阳市",
-        "icon": "ding"
-      },
-      {
-        "name": "开封铁塔",
-        "city": "开封市",
-        "icon": "pagoda"
-      },
-      {
-        "name": "黄河三门峡",
-        "city": "三门峡市",
-        "icon": "wave"
-      },
-      {
-        "name": "鸡公山",
-        "city": "信阳市",
-        "icon": "mountain"
-      }
-    ],
-    "universities": [
-      {
-        "name": "郑州大学",
-        "city": "郑州市"
-      },
-      {
-        "name": "河南大学",
-        "city": "开封市"
-      }
-    ]
-  }
+ "河北": {
+  "fullName": "河北省",
+  "abbr": "冀",
+  "tagline": "燕赵大地 · 英才辈出",
+  "intro": "京畿要地，环抱京津，东临渤海",
+  "capital": "石家庄市",
+  "highlightCities": [
+   "石家庄市",
+   "保定市",
+   "唐山市",
+   "秦皇岛市",
+   "邯郸市",
+   "衡水市",
+   "承德市",
+   "张家口市"
+  ],
+  "landmarks": [
+   {
+    "name": "山海关",
+    "city": "秦皇岛市",
+    "icon": "gate"
+   },
+   {
+    "name": "避暑山庄",
+    "city": "承德市",
+    "icon": "pavilion"
+   },
+   {
+    "name": "赵州桥",
+    "city": "石家庄市",
+    "icon": "bridge"
+   },
+   {
+    "name": "白洋淀",
+    "city": "保定市",
+    "icon": "lotus"
+   },
+   {
+    "name": "崇礼雪场",
+    "city": "张家口市",
+    "icon": "mountain"
+   }
+  ],
+  "universities": [
+   {
+    "name": "河北大学",
+    "city": "保定市"
+   },
+   {
+    "name": "燕山大学",
+    "city": "秦皇岛市"
+   },
+   {
+    "name": "河北医科大学",
+    "city": "石家庄市"
+   }
+  ]
+ },
+ "河南": {
+  "fullName": "河南省",
+  "abbr": "豫",
+  "tagline": "中原大地 · 金榜题名",
+  "intro": "华夏之源，黄河之畔，天地之中",
+  "capital": "郑州市",
+  "highlightCities": [
+   "郑州市",
+   "洛阳市",
+   "开封市",
+   "南阳市",
+   "安阳市",
+   "新乡市",
+   "商丘市",
+   "信阳市"
+  ],
+  "landmarks": [
+   {
+    "name": "少林寺",
+    "city": "郑州市",
+    "icon": "temple"
+   },
+   {
+    "name": "龙门石窟",
+    "city": "洛阳市",
+    "icon": "grotto"
+   },
+   {
+    "name": "殷墟",
+    "city": "安阳市",
+    "icon": "ding"
+   },
+   {
+    "name": "开封铁塔",
+    "city": "开封市",
+    "icon": "pagoda"
+   },
+   {
+    "name": "黄河三门峡",
+    "city": "三门峡市",
+    "icon": "wave"
+   },
+   {
+    "name": "鸡公山",
+    "city": "信阳市",
+    "icon": "mountain"
+   }
+  ],
+  "universities": [
+   {
+    "name": "郑州大学",
+    "city": "郑州市"
+   },
+   {
+    "name": "河南大学",
+    "city": "开封市"
+   }
+  ]
+ },
+ "北京": {
+  "fullName": "北京市",
+  "abbr": "京",
+  "tagline": "首善之区 · 名校云集",
+  "intro": "千年古都，文脉所系",
+  "capital": "东城区",
+  "highlightCities": [
+   "东城区",
+   "海淀区",
+   "朝阳区",
+   "西城区",
+   "丰台区",
+   "通州区",
+   "昌平区",
+   "顺义区"
+  ],
+  "landmarks": [
+   {
+    "name": "故宫",
+    "city": "西城区",
+    "icon": "gate"
+   },
+   {
+    "name": "八达岭长城",
+    "city": "延庆区",
+    "icon": "mountain"
+   },
+   {
+    "name": "颐和园",
+    "city": "海淀区",
+    "icon": "pavilion"
+   },
+   {
+    "name": "天坛",
+    "city": "东城区",
+    "icon": "pagoda"
+   },
+   {
+    "name": "雁栖湖",
+    "city": "怀柔区",
+    "icon": "wave"
+   }
+  ],
+  "universities": [
+   {
+    "name": "清华大学",
+    "city": "海淀区"
+   },
+   {
+    "name": "北京大学",
+    "city": "海淀区"
+   }
+  ]
+ },
+ "天津": {
+  "fullName": "天津市",
+  "abbr": "津",
+  "tagline": "津门故里 · 人才辈出",
+  "intro": "九河下梢，渤海明珠",
+  "capital": "和平区",
+  "highlightCities": [
+   "和平区",
+   "南开区",
+   "滨海新区",
+   "武清区",
+   "蓟州区",
+   "静海区",
+   "宝坻区"
+  ],
+  "landmarks": [
+   {
+    "name": "天津之眼",
+    "city": "红桥区",
+    "icon": "tower"
+   },
+   {
+    "name": "盘山",
+    "city": "蓟州区",
+    "icon": "mountain"
+   },
+   {
+    "name": "古文化街",
+    "city": "南开区",
+    "icon": "gate"
+   },
+   {
+    "name": "滨海图书馆",
+    "city": "滨海新区",
+    "icon": "wave"
+   }
+  ],
+  "universities": [
+   {
+    "name": "南开大学",
+    "city": "南开区"
+   },
+   {
+    "name": "天津大学",
+    "city": "津南区"
+   }
+  ]
+ },
+ "山西": {
+  "fullName": "山西省",
+  "abbr": "晋",
+  "tagline": "表里山河 · 晋善晋美",
+  "intro": "三晋大地，文脉悠长",
+  "capital": "太原市",
+  "highlightCities": [
+   "太原",
+   "大同",
+   "运城",
+   "临汾",
+   "长治",
+   "晋中",
+   "晋城",
+   "忻州"
+  ],
+  "landmarks": [
+   {
+    "name": "云冈石窟",
+    "city": "大同",
+    "icon": "grotto"
+   },
+   {
+    "name": "五台山",
+    "city": "忻州",
+    "icon": "temple"
+   },
+   {
+    "name": "平遥古城",
+    "city": "晋中",
+    "icon": "gate"
+   },
+   {
+    "name": "壶口瀑布",
+    "city": "临汾",
+    "icon": "wave"
+   },
+   {
+    "name": "鹳雀楼",
+    "city": "运城",
+    "icon": "pagoda"
+   }
+  ],
+  "universities": [
+   {
+    "name": "山西大学",
+    "city": "太原"
+   },
+   {
+    "name": "太原理工大学",
+    "city": "太原"
+   }
+  ]
+ },
+ "内蒙古": {
+  "fullName": "内蒙古自治区",
+  "abbr": "蒙",
+  "tagline": "辽阔草原 · 骏马奔腾",
+  "intro": "北疆亮丽，草原如歌",
+  "capital": "呼和浩特市",
+  "highlightCities": [
+   "呼和浩特",
+   "包头",
+   "鄂尔多斯",
+   "赤峰",
+   "通辽",
+   "呼伦贝尔",
+   "锡林郭勒",
+   "乌兰察布"
+  ],
+  "landmarks": [
+   {
+    "name": "呼伦贝尔草原",
+    "city": "呼伦贝尔",
+    "icon": "yurt"
+   },
+   {
+    "name": "成吉思汗陵",
+    "city": "鄂尔多斯",
+    "icon": "temple"
+   },
+   {
+    "name": "阿尔山",
+    "city": "兴安盟",
+    "icon": "mountain"
+   },
+   {
+    "name": "锡林郭勒草原",
+    "city": "锡林郭勒",
+    "icon": "yurt"
+   },
+   {
+    "name": "额济纳胡杨林",
+    "city": "阿拉善",
+    "icon": "lotus"
+   }
+  ],
+  "universities": [
+   {
+    "name": "内蒙古大学",
+    "city": "呼和浩特"
+   }
+  ]
+ },
+ "辽宁": {
+  "fullName": "辽宁省",
+  "abbr": "辽",
+  "tagline": "辽沈大地 · 蟾宫折桂",
+  "intro": "山海之间，工业摇篮",
+  "capital": "沈阳市",
+  "highlightCities": [
+   "沈阳",
+   "大连",
+   "鞍山",
+   "锦州",
+   "丹东",
+   "葫芦岛",
+   "营口",
+   "抚顺"
+  ],
+  "landmarks": [
+   {
+    "name": "沈阳故宫",
+    "city": "沈阳",
+    "icon": "temple"
+   },
+   {
+    "name": "星海广场",
+    "city": "大连",
+    "icon": "wave"
+   },
+   {
+    "name": "鸭绿江断桥",
+    "city": "丹东",
+    "icon": "bridge"
+   },
+   {
+    "name": "千山",
+    "city": "鞍山",
+    "icon": "mountain"
+   },
+   {
+    "name": "兴城古城",
+    "city": "葫芦岛",
+    "icon": "gate"
+   }
+  ],
+  "universities": [
+   {
+    "name": "大连理工大学",
+    "city": "大连"
+   },
+   {
+    "name": "东北大学",
+    "city": "沈阳"
+   }
+  ]
+ },
+ "吉林": {
+  "fullName": "吉林省",
+  "abbr": "吉",
+  "tagline": "白山松水 · 学子争先",
+  "intro": "长白巍巍，松江滔滔",
+  "capital": "长春市",
+  "highlightCities": [
+   "长春",
+   "吉林市",
+   "延边",
+   "四平",
+   "通化",
+   "白山",
+   "松原"
+  ],
+  "landmarks": [
+   {
+    "name": "长白山天池",
+    "city": "白山",
+    "icon": "mountain"
+   },
+   {
+    "name": "雾凇岛",
+    "city": "吉林市",
+    "icon": "snow"
+   },
+   {
+    "name": "净月潭",
+    "city": "长春",
+    "icon": "lotus"
+   },
+   {
+    "name": "查干湖",
+    "city": "松原",
+    "icon": "wave"
+   }
+  ],
+  "universities": [
+   {
+    "name": "吉林大学",
+    "city": "长春"
+   },
+   {
+    "name": "延边大学",
+    "city": "延边"
+   }
+  ]
+ },
+ "黑龙江": {
+  "fullName": "黑龙江省",
+  "abbr": "黑",
+  "tagline": "北国冰城 · 学霸辈出",
+  "intro": "黑土沃野，冰雪之乡",
+  "capital": "哈尔滨市",
+  "highlightCities": [
+   "哈尔滨",
+   "齐齐哈尔",
+   "大庆",
+   "牡丹江",
+   "佳木斯",
+   "绥化",
+   "黑河",
+   "鸡西"
+  ],
+  "landmarks": [
+   {
+    "name": "冰雪大世界",
+    "city": "哈尔滨",
+    "icon": "snow"
+   },
+   {
+    "name": "镜泊湖",
+    "city": "牡丹江",
+    "icon": "wave"
+   },
+   {
+    "name": "五大连池",
+    "city": "黑河",
+    "icon": "mountain"
+   },
+   {
+    "name": "扎龙湿地",
+    "city": "齐齐哈尔",
+    "icon": "lotus"
+   },
+   {
+    "name": "北极村",
+    "city": "大兴安岭",
+    "icon": "snow"
+   }
+  ],
+  "universities": [
+   {
+    "name": "哈尔滨工业大学",
+    "city": "哈尔滨"
+   }
+  ]
+ },
+ "上海": {
+  "fullName": "上海市",
+  "abbr": "沪",
+  "tagline": "海纳百川 · 追求卓越",
+  "intro": "东方明珠，浦江两岸",
+  "capital": "黄浦区",
+  "highlightCities": [
+   "黄浦区",
+   "浦东新区",
+   "徐汇区",
+   "杨浦区",
+   "闵行区",
+   "松江区",
+   "嘉定区",
+   "崇明区"
+  ],
+  "landmarks": [
+   {
+    "name": "东方明珠",
+    "city": "浦东新区",
+    "icon": "tower"
+   },
+   {
+    "name": "外滩",
+    "city": "黄浦区",
+    "icon": "gate"
+   },
+   {
+    "name": "朱家角古镇",
+    "city": "青浦区",
+    "icon": "bridge"
+   },
+   {
+    "name": "佘山",
+    "city": "松江区",
+    "icon": "mountain"
+   }
+  ],
+  "universities": [
+   {
+    "name": "复旦大学",
+    "city": "杨浦区"
+   },
+   {
+    "name": "上海交通大学",
+    "city": "闵行区"
+   }
+  ]
+ },
+ "江苏": {
+  "fullName": "江苏省",
+  "abbr": "苏",
+  "tagline": "水韵江苏 · 才子之乡",
+  "intro": "吴韵汉风，鱼米之乡",
+  "capital": "南京市",
+  "highlightCities": [
+   "南京",
+   "苏州",
+   "无锡",
+   "徐州",
+   "南通",
+   "扬州",
+   "常州",
+   "盐城",
+   "连云港"
+  ],
+  "landmarks": [
+   {
+    "name": "中山陵",
+    "city": "南京",
+    "icon": "temple"
+   },
+   {
+    "name": "拙政园",
+    "city": "苏州",
+    "icon": "pavilion"
+   },
+   {
+    "name": "鼋头渚",
+    "city": "无锡",
+    "icon": "wave"
+   },
+   {
+    "name": "瘦西湖",
+    "city": "扬州",
+    "icon": "bridge"
+   },
+   {
+    "name": "花果山",
+    "city": "连云港",
+    "icon": "mountain"
+   }
+  ],
+  "universities": [
+   {
+    "name": "南京大学",
+    "city": "南京"
+   },
+   {
+    "name": "苏州大学",
+    "city": "苏州"
+   }
+  ]
+ },
+ "浙江": {
+  "fullName": "浙江省",
+  "abbr": "浙",
+  "tagline": "诗画江南 · 文脉绵长",
+  "intro": "西湖烟雨，千岛之湖",
+  "capital": "杭州市",
+  "highlightCities": [
+   "杭州",
+   "宁波",
+   "温州",
+   "绍兴",
+   "嘉兴",
+   "金华",
+   "台州",
+   "湖州"
+  ],
+  "landmarks": [
+   {
+    "name": "西湖雷峰塔",
+    "city": "杭州",
+    "icon": "pagoda"
+   },
+   {
+    "name": "乌镇",
+    "city": "嘉兴",
+    "icon": "bridge"
+   },
+   {
+    "name": "普陀山",
+    "city": "舟山",
+    "icon": "temple"
+   },
+   {
+    "name": "雁荡山",
+    "city": "温州",
+    "icon": "mountain"
+   },
+   {
+    "name": "鲁迅故里",
+    "city": "绍兴",
+    "icon": "gate"
+   }
+  ],
+  "universities": [
+   {
+    "name": "浙江大学",
+    "city": "杭州"
+   }
+  ]
+ },
+ "安徽": {
+  "fullName": "安徽省",
+  "abbr": "皖",
+  "tagline": "江淮大地 · 徽风皖韵",
+  "intro": "黄山迎客，文房四宝之乡",
+  "capital": "合肥市",
+  "highlightCities": [
+   "合肥",
+   "芜湖",
+   "蚌埠",
+   "安庆",
+   "黄山",
+   "阜阳",
+   "六安",
+   "马鞍山"
+  ],
+  "landmarks": [
+   {
+    "name": "黄山",
+    "city": "黄山",
+    "icon": "mountain"
+   },
+   {
+    "name": "九华山",
+    "city": "池州",
+    "icon": "temple"
+   },
+   {
+    "name": "天柱山",
+    "city": "安庆",
+    "icon": "mountain"
+   },
+   {
+    "name": "采石矶",
+    "city": "马鞍山",
+    "icon": "pavilion"
+   },
+   {
+    "name": "花戏楼",
+    "city": "亳州",
+    "icon": "gate"
+   }
+  ],
+  "universities": [
+   {
+    "name": "中国科学技术大学",
+    "city": "合肥"
+   }
+  ]
+ },
+ "福建": {
+  "fullName": "福建省",
+  "abbr": "闽",
+  "tagline": "八闽大地 · 爱拼会赢",
+  "intro": "山海画廊，海丝起点",
+  "capital": "福州市",
+  "highlightCities": [
+   "福州",
+   "厦门",
+   "泉州",
+   "漳州",
+   "莆田",
+   "龙岩",
+   "三明",
+   "南平",
+   "宁德"
+  ],
+  "landmarks": [
+   {
+    "name": "鼓浪屿",
+    "city": "厦门",
+    "icon": "wave"
+   },
+   {
+    "name": "武夷山",
+    "city": "南平",
+    "icon": "mountain"
+   },
+   {
+    "name": "永定土楼",
+    "city": "龙岩",
+    "icon": "gate"
+   },
+   {
+    "name": "三坊七巷",
+    "city": "福州",
+    "icon": "pavilion"
+   },
+   {
+    "name": "开元寺",
+    "city": "泉州",
+    "icon": "pagoda"
+   }
+  ],
+  "universities": [
+   {
+    "name": "厦门大学",
+    "city": "厦门"
+   },
+   {
+    "name": "福州大学",
+    "city": "福州"
+   }
+  ]
+ },
+ "江西": {
+  "fullName": "江西省",
+  "abbr": "赣",
+  "tagline": "物华天宝 · 人杰地灵",
+  "intro": "赣鄱大地，红色摇篮",
+  "capital": "南昌市",
+  "highlightCities": [
+   "南昌",
+   "九江",
+   "赣州",
+   "上饶",
+   "景德镇",
+   "吉安",
+   "宜春",
+   "抚州"
+  ],
+  "landmarks": [
+   {
+    "name": "滕王阁",
+    "city": "南昌",
+    "icon": "pavilion"
+   },
+   {
+    "name": "庐山",
+    "city": "九江",
+    "icon": "mountain"
+   },
+   {
+    "name": "井冈山",
+    "city": "吉安",
+    "icon": "mountain"
+   },
+   {
+    "name": "瓷都",
+    "city": "景德镇",
+    "icon": "ding"
+   },
+   {
+    "name": "婺源",
+    "city": "上饶",
+    "icon": "bridge"
+   }
+  ],
+  "universities": [
+   {
+    "name": "南昌大学",
+    "city": "南昌"
+   }
+  ]
+ },
+ "山东": {
+  "fullName": "山东省",
+  "abbr": "鲁",
+  "tagline": "齐鲁大地 · 孔孟之乡",
+  "intro": "泰山巍峨，黄河入海",
+  "capital": "济南市",
+  "highlightCities": [
+   "济南",
+   "青岛",
+   "烟台",
+   "潍坊",
+   "临沂",
+   "济宁",
+   "泰安",
+   "威海",
+   "淄博"
+  ],
+  "landmarks": [
+   {
+    "name": "泰山",
+    "city": "泰安",
+    "icon": "mountain"
+   },
+   {
+    "name": "曲阜孔庙",
+    "city": "济宁",
+    "icon": "temple"
+   },
+   {
+    "name": "趵突泉",
+    "city": "济南",
+    "icon": "lotus"
+   },
+   {
+    "name": "栈桥",
+    "city": "青岛",
+    "icon": "pavilion"
+   },
+   {
+    "name": "蓬莱阁",
+    "city": "烟台",
+    "icon": "pagoda"
+   }
+  ],
+  "universities": [
+   {
+    "name": "山东大学",
+    "city": "济南"
+   },
+   {
+    "name": "中国海洋大学",
+    "city": "青岛"
+   }
+  ]
+ },
+ "湖北": {
+  "fullName": "湖北省",
+  "abbr": "鄂",
+  "tagline": "荆楚大地 · 惟楚有才",
+  "intro": "千湖之省，九省通衢",
+  "capital": "武汉市",
+  "highlightCities": [
+   "武汉",
+   "宜昌",
+   "襄阳",
+   "荆州",
+   "十堰",
+   "黄冈",
+   "孝感",
+   "恩施"
+  ],
+  "landmarks": [
+   {
+    "name": "黄鹤楼",
+    "city": "武汉",
+    "icon": "pagoda"
+   },
+   {
+    "name": "三峡大坝",
+    "city": "宜昌",
+    "icon": "wave"
+   },
+   {
+    "name": "武当山",
+    "city": "十堰",
+    "icon": "temple"
+   },
+   {
+    "name": "古隆中",
+    "city": "襄阳",
+    "icon": "pavilion"
+   },
+   {
+    "name": "恩施大峡谷",
+    "city": "恩施",
+    "icon": "mountain"
+   }
+  ],
+  "universities": [
+   {
+    "name": "武汉大学",
+    "city": "武汉"
+   },
+   {
+    "name": "华中科技大学",
+    "city": "武汉"
+   }
+  ]
+ },
+ "湖南": {
+  "fullName": "湖南省",
+  "abbr": "湘",
+  "tagline": "三湘四水 · 于斯为盛",
+  "intro": "芙蓉国里，湖湘文脉",
+  "capital": "长沙市",
+  "highlightCities": [
+   "长沙",
+   "株洲",
+   "湘潭",
+   "衡阳",
+   "岳阳",
+   "常德",
+   "张家界",
+   "郴州",
+   "怀化"
+  ],
+  "landmarks": [
+   {
+    "name": "岳麓书院",
+    "city": "长沙",
+    "icon": "temple"
+   },
+   {
+    "name": "岳阳楼",
+    "city": "岳阳",
+    "icon": "pavilion"
+   },
+   {
+    "name": "张家界",
+    "city": "张家界",
+    "icon": "mountain"
+   },
+   {
+    "name": "凤凰古城",
+    "city": "湘西",
+    "icon": "bridge"
+   },
+   {
+    "name": "南岳衡山",
+    "city": "衡阳",
+    "icon": "mountain"
+   }
+  ],
+  "universities": [
+   {
+    "name": "湖南大学",
+    "city": "长沙"
+   }
+  ]
+ },
+ "广东": {
+  "fullName": "广东省",
+  "abbr": "粤",
+  "tagline": "岭南大地 · 敢为人先",
+  "intro": "珠江潮涌，湾区扬帆",
+  "capital": "广州市",
+  "highlightCities": [
+   "广州",
+   "深圳",
+   "佛山",
+   "东莞",
+   "珠海",
+   "汕头",
+   "湛江",
+   "惠州",
+   "韶关"
+  ],
+  "landmarks": [
+   {
+    "name": "广州塔",
+    "city": "广州",
+    "icon": "tower"
+   },
+   {
+    "name": "港珠澳大桥",
+    "city": "珠海",
+    "icon": "bridge"
+   },
+   {
+    "name": "丹霞山",
+    "city": "韶关",
+    "icon": "mountain"
+   },
+   {
+    "name": "开平碉楼",
+    "city": "江门",
+    "icon": "pagoda"
+   },
+   {
+    "name": "深圳湾",
+    "city": "深圳",
+    "icon": "wave"
+   }
+  ],
+  "universities": [
+   {
+    "name": "中山大学",
+    "city": "广州"
+   },
+   {
+    "name": "深圳大学",
+    "city": "深圳"
+   }
+  ]
+ },
+ "广西": {
+  "fullName": "广西壮族自治区",
+  "abbr": "桂",
+  "tagline": "八桂大地 · 山水如画",
+  "intro": "漓江如画，壮乡如歌",
+  "capital": "南宁市",
+  "highlightCities": [
+   "南宁",
+   "桂林",
+   "柳州",
+   "北海",
+   "玉林",
+   "梧州",
+   "百色",
+   "河池"
+  ],
+  "landmarks": [
+   {
+    "name": "象鼻山",
+    "city": "桂林",
+    "icon": "mountain"
+   },
+   {
+    "name": "北海银滩",
+    "city": "北海",
+    "icon": "wave"
+   },
+   {
+    "name": "德天瀑布",
+    "city": "崇左",
+    "icon": "wave"
+   },
+   {
+    "name": "程阳风雨桥",
+    "city": "柳州",
+    "icon": "bridge"
+   },
+   {
+    "name": "青秀山",
+    "city": "南宁",
+    "icon": "pagoda"
+   }
+  ],
+  "universities": [
+   {
+    "name": "广西大学",
+    "city": "南宁"
+   }
+  ]
+ },
+ "海南": {
+  "fullName": "海南省",
+  "abbr": "琼",
+  "tagline": "椰风海韵 · 学子扬帆",
+  "intro": "南海明珠，四季如春",
+  "capital": "海口市",
+  "highlightCities": [
+   "海口",
+   "三亚",
+   "儋州",
+   "琼海",
+   "文昌",
+   "万宁",
+   "五指山"
+  ],
+  "landmarks": [
+   {
+    "name": "天涯海角",
+    "city": "三亚",
+    "icon": "wave"
+   },
+   {
+    "name": "五指山",
+    "city": "五指山",
+    "icon": "mountain"
+   },
+   {
+    "name": "博鳌",
+    "city": "琼海",
+    "icon": "pavilion"
+   },
+   {
+    "name": "文昌航天城",
+    "city": "文昌",
+    "icon": "tower"
+   },
+   {
+    "name": "骑楼老街",
+    "city": "海口",
+    "icon": "gate"
+   }
+  ],
+  "universities": [
+   {
+    "name": "海南大学",
+    "city": "海口"
+   }
+  ]
+ },
+ "重庆": {
+  "fullName": "重庆市",
+  "abbr": "渝",
+  "tagline": "山城雾都 · 勇攀高峰",
+  "intro": "两江交汇，山水之城",
+  "capital": "渝中区",
+  "highlightCities": [
+   "渝中区",
+   "沙坪坝区",
+   "万州区",
+   "涪陵区",
+   "北碚区",
+   "江津区",
+   "永川区",
+   "合川区"
+  ],
+  "landmarks": [
+   {
+    "name": "解放碑",
+    "city": "渝中区",
+    "icon": "tower"
+   },
+   {
+    "name": "武隆天坑",
+    "city": "武隆区",
+    "icon": "mountain"
+   },
+   {
+    "name": "大足石刻",
+    "city": "大足区",
+    "icon": "grotto"
+   },
+   {
+    "name": "三峡夔门",
+    "city": "奉节县",
+    "icon": "wave"
+   },
+   {
+    "name": "钓鱼城",
+    "city": "合川区",
+    "icon": "gate"
+   }
+  ],
+  "universities": [
+   {
+    "name": "重庆大学",
+    "city": "沙坪坝区"
+   },
+   {
+    "name": "西南大学",
+    "city": "北碚区"
+   }
+  ]
+ },
+ "四川": {
+  "fullName": "四川省",
+  "abbr": "川",
+  "tagline": "天府之国 · 蜀地英才",
+  "intro": "巴山蜀水，熊猫故乡",
+  "capital": "成都市",
+  "highlightCities": [
+   "成都",
+   "绵阳",
+   "德阳",
+   "南充",
+   "宜宾",
+   "泸州",
+   "乐山",
+   "达州",
+   "自贡"
+  ],
+  "landmarks": [
+   {
+    "name": "都江堰",
+    "city": "成都",
+    "icon": "wave"
+   },
+   {
+    "name": "乐山大佛",
+    "city": "乐山",
+    "icon": "grotto"
+   },
+   {
+    "name": "九寨沟",
+    "city": "阿坝",
+    "icon": "mountain"
+   },
+   {
+    "name": "稻城亚丁",
+    "city": "甘孜",
+    "icon": "mountain"
+   },
+   {
+    "name": "剑门关",
+    "city": "广元",
+    "icon": "gate"
+   }
+  ],
+  "universities": [
+   {
+    "name": "四川大学",
+    "city": "成都"
+   },
+   {
+    "name": "电子科技大学",
+    "city": "成都"
+   }
+  ]
+ },
+ "贵州": {
+  "fullName": "贵州省",
+  "abbr": "黔",
+  "tagline": "多彩贵州 · 山高人为峰",
+  "intro": "黔山秀水，天眼问天",
+  "capital": "贵阳市",
+  "highlightCities": [
+   "贵阳",
+   "遵义",
+   "毕节",
+   "安顺",
+   "六盘水",
+   "铜仁",
+   "黔东南",
+   "黔南"
+  ],
+  "landmarks": [
+   {
+    "name": "黄果树瀑布",
+    "city": "安顺",
+    "icon": "wave"
+   },
+   {
+    "name": "遵义会议会址",
+    "city": "遵义",
+    "icon": "temple"
+   },
+   {
+    "name": "西江苗寨",
+    "city": "黔东南",
+    "icon": "pavilion"
+   },
+   {
+    "name": "梵净山",
+    "city": "铜仁",
+    "icon": "mountain"
+   },
+   {
+    "name": "中国天眼",
+    "city": "黔南",
+    "icon": "ding"
+   }
+  ],
+  "universities": [
+   {
+    "name": "贵州大学",
+    "city": "贵阳"
+   }
+  ]
+ },
+ "云南": {
+  "fullName": "云南省",
+  "abbr": "滇",
+  "tagline": "七彩云南 · 梦想花开",
+  "intro": "彩云之南，四季如春",
+  "capital": "昆明市",
+  "highlightCities": [
+   "昆明",
+   "曲靖",
+   "玉溪",
+   "大理",
+   "丽江",
+   "红河",
+   "楚雄",
+   "西双版纳",
+   "昭通"
+  ],
+  "landmarks": [
+   {
+    "name": "玉龙雪山",
+    "city": "丽江",
+    "icon": "mountain"
+   },
+   {
+    "name": "洱海",
+    "city": "大理",
+    "icon": "wave"
+   },
+   {
+    "name": "石林",
+    "city": "昆明",
+    "icon": "grotto"
+   },
+   {
+    "name": "曼听公园",
+    "city": "西双版纳",
+    "icon": "pagoda"
+   },
+   {
+    "name": "香格里拉",
+    "city": "迪庆",
+    "icon": "temple"
+   }
+  ],
+  "universities": [
+   {
+    "name": "云南大学",
+    "city": "昆明"
+   }
+  ]
+ },
+ "西藏": {
+  "fullName": "西藏自治区",
+  "abbr": "藏",
+  "tagline": "雪域高原 · 逐梦云端",
+  "intro": "世界屋脊，圣洁天空",
+  "capital": "拉萨市",
+  "highlightCities": [
+   "拉萨",
+   "日喀则",
+   "林芝",
+   "昌都",
+   "山南",
+   "那曲",
+   "阿里"
+  ],
+  "landmarks": [
+   {
+    "name": "布达拉宫",
+    "city": "拉萨",
+    "icon": "temple"
+   },
+   {
+    "name": "珠穆朗玛峰",
+    "city": "日喀则",
+    "icon": "mountain"
+   },
+   {
+    "name": "雅鲁藏布大峡谷",
+    "city": "林芝",
+    "icon": "wave"
+   },
+   {
+    "name": "纳木错",
+    "city": "那曲",
+    "icon": "wave"
+   },
+   {
+    "name": "冈仁波齐",
+    "city": "阿里",
+    "icon": "mountain"
+   }
+  ],
+  "universities": [
+   {
+    "name": "西藏大学",
+    "city": "拉萨"
+   }
+  ]
+ },
+ "陕西": {
+  "fullName": "陕西省",
+  "abbr": "陕",
+  "tagline": "三秦大地 · 文脉千年",
+  "intro": "十三朝古都，黄土高原",
+  "capital": "西安市",
+  "highlightCities": [
+   "西安",
+   "咸阳",
+   "宝鸡",
+   "渭南",
+   "延安",
+   "榆林",
+   "汉中",
+   "安康"
+  ],
+  "landmarks": [
+   {
+    "name": "大雁塔",
+    "city": "西安",
+    "icon": "pagoda"
+   },
+   {
+    "name": "华山",
+    "city": "渭南",
+    "icon": "mountain"
+   },
+   {
+    "name": "宝塔山",
+    "city": "延安",
+    "icon": "pagoda"
+   },
+   {
+    "name": "法门寺",
+    "city": "宝鸡",
+    "icon": "temple"
+   },
+   {
+    "name": "镇北台",
+    "city": "榆林",
+    "icon": "gate"
+   }
+  ],
+  "universities": [
+   {
+    "name": "西安交通大学",
+    "city": "西安"
+   },
+   {
+    "name": "西北工业大学",
+    "city": "西安"
+   }
+  ]
+ },
+ "甘肃": {
+  "fullName": "甘肃省",
+  "abbr": "甘",
+  "tagline": "陇原大地 · 丝路明珠",
+  "intro": "敦煌飞天，黄河穿城",
+  "capital": "兰州市",
+  "highlightCities": [
+   "兰州",
+   "天水",
+   "酒泉",
+   "张掖",
+   "武威",
+   "庆阳",
+   "平凉",
+   "嘉峪关",
+   "定西"
+  ],
+  "landmarks": [
+   {
+    "name": "莫高窟",
+    "city": "酒泉",
+    "icon": "grotto"
+   },
+   {
+    "name": "嘉峪关",
+    "city": "嘉峪关",
+    "icon": "gate"
+   },
+   {
+    "name": "七彩丹霞",
+    "city": "张掖",
+    "icon": "mountain"
+   },
+   {
+    "name": "麦积山",
+    "city": "天水",
+    "icon": "temple"
+   },
+   {
+    "name": "黄河铁桥",
+    "city": "兰州",
+    "icon": "bridge"
+   }
+  ],
+  "universities": [
+   {
+    "name": "兰州大学",
+    "city": "兰州"
+   }
+  ]
+ },
+ "青海": {
+  "fullName": "青海省",
+  "abbr": "青",
+  "tagline": "大美青海 · 追光少年",
+  "intro": "三江之源，高原明珠",
+  "capital": "西宁市",
+  "highlightCities": [
+   "西宁",
+   "海东",
+   "海西",
+   "玉树",
+   "海北",
+   "果洛",
+   "海南藏族"
+  ],
+  "landmarks": [
+   {
+    "name": "青海湖",
+    "city": "海北",
+    "icon": "wave"
+   },
+   {
+    "name": "塔尔寺",
+    "city": "西宁",
+    "icon": "temple"
+   },
+   {
+    "name": "茶卡盐湖",
+    "city": "海西",
+    "icon": "lotus"
+   },
+   {
+    "name": "三江源",
+    "city": "玉树",
+    "icon": "mountain"
+   },
+   {
+    "name": "坎布拉",
+    "city": "黄南",
+    "icon": "mountain"
+   }
+  ],
+  "universities": [
+   {
+    "name": "青海大学",
+    "city": "西宁"
+   }
+  ]
+ },
+ "宁夏": {
+  "fullName": "宁夏回族自治区",
+  "abbr": "宁",
+  "tagline": "塞上江南 · 学子争辉",
+  "intro": "贺兰山下，黄河金岸",
+  "capital": "银川市",
+  "highlightCities": [
+   "银川",
+   "石嘴山",
+   "吴忠",
+   "固原",
+   "中卫"
+  ],
+  "landmarks": [
+   {
+    "name": "西夏王陵",
+    "city": "银川",
+    "icon": "pagoda"
+   },
+   {
+    "name": "沙坡头",
+    "city": "中卫",
+    "icon": "wave"
+   },
+   {
+    "name": "贺兰山",
+    "city": "石嘴山",
+    "icon": "mountain"
+   },
+   {
+    "name": "六盘山",
+    "city": "固原",
+    "icon": "mountain"
+   },
+   {
+    "name": "青铜峡",
+    "city": "吴忠",
+    "icon": "gate"
+   }
+  ],
+  "universities": [
+   {
+    "name": "宁夏大学",
+    "city": "银川"
+   }
+  ]
+ },
+ "新疆": {
+  "fullName": "新疆维吾尔自治区",
+  "abbr": "新",
+  "tagline": "大美新疆 · 逐梦天山",
+  "intro": "天山南北，瓜果之乡",
+  "capital": "乌鲁木齐市",
+  "highlightCities": [
+   "乌鲁木齐",
+   "喀什",
+   "伊犁",
+   "克拉玛依",
+   "吐鲁番",
+   "哈密",
+   "阿克苏",
+   "巴音郭楞"
+  ],
+  "landmarks": [
+   {
+    "name": "天山天池",
+    "city": "昌吉",
+    "icon": "wave"
+   },
+   {
+    "name": "喀纳斯",
+    "city": "阿勒泰",
+    "icon": "mountain"
+   },
+   {
+    "name": "火焰山",
+    "city": "吐鲁番",
+    "icon": "mountain"
+   },
+   {
+    "name": "喀什古城",
+    "city": "喀什",
+    "icon": "gate"
+   },
+   {
+    "name": "那拉提草原",
+    "city": "伊犁",
+    "icon": "yurt"
+   }
+  ],
+  "universities": [
+   {
+    "name": "新疆大学",
+    "city": "乌鲁木齐"
+   },
+   {
+    "name": "石河子大学",
+    "city": "石河子"
+   }
+  ]
+ }
 }

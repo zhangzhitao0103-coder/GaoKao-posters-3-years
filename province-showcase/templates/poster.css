@@ -391,3 +391,17 @@ body { font-family: var(--sans); color: var(--ink); -webkit-font-smoothing: anti
 .cloud:first-child { left: 34px; top: 40px; }
 .cloud:last-child { right: 34px; top: 210px; transform: scaleX(-1); width: 140px; }
 .foot { margin-top: 50px; padding: 40px 60px 46px; }
+
+/* 状元 5 位以上：三列紧凑卡片 */
+.champ-grid.three { grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.champ-grid.three .champ { padding: 44px 10px 18px; }
+.champ-grid.three .champ-crown { display: none; }
+.champ-grid.three .champ-year { top: 12px; left: 14px; font-size: 22px; }
+.champ-grid.three .champ-title { font-size: 22px; letter-spacing: 1px; margin-top: 0; }
+.champ-grid.three .champ-name { font-size: 54px; letter-spacing: 4px; }
+.champ-grid.three .champ-row { flex-direction: column; align-items: center; gap: 4px; margin-top: 0; }
+.champ-grid.three .champ-score { font-size: 64px; }
+.champ-grid.three .champ-score i { font-size: 24px; }
+.champ-grid.three .champ-school { font-size: 28px; transform: none; padding: 2px 16px; }
+.champ-grid.three .champ-hl { flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.champ-grid.three .champ-hl span { font-size: 19px; padding: 1px 10px; }
