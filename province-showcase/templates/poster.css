@@ -285,3 +285,22 @@ body { font-family: var(--sans); color: var(--ink); -webkit-font-smoothing: anti
 .stats .stat { flex: 0 1 340px; }
 .facts { gap: 22px; }
 .hero-mid { margin-top: 80px; }
+
+/* 日常提分：按学科组 */
+.dgs { display: flex; flex-direction: column; gap: 22px; }
+.dg { background: #fff; border-radius: 22px; padding: 20px 26px 12px; border: 2px solid rgba(165, 18, 25, .12); }
+.dg-h { display: flex; align-items: center; justify-content: space-between; padding-bottom: 12px; border-bottom: 2px solid var(--red-700); }
+.dg-name { font-family: var(--serif); font-weight: 900; font-size: 40px; color: #fff; background: linear-gradient(160deg, var(--red-600), var(--red-800)); padding: 2px 26px; border-radius: 12px; letter-spacing: 2px; }
+.dg-name i { font-style: normal; color: var(--gold-300); margin: 0 6px; }
+.dg-subs { font-size: 24px; color: var(--ink-2); letter-spacing: 2px; }
+.dg-rows { display: grid; grid-template-columns: 1fr 1fr; column-gap: 34px; }
+.dg-row { display: grid; grid-template-columns: 46px 1fr auto 88px; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1.5px dashed rgba(165, 18, 25, .16); }
+.dg-tag { width: 46px; height: 46px; border-radius: 12px; display: grid; place-items: center; font-family: var(--serif); font-weight: 900; font-size: 28px; color: #fff; }
+.s-语文 { background: #c4161f; } .s-数学 { background: #b8541a; } .s-英语 { background: #a8327a; }
+.s-物理 { background: #1f5fa8; } .s-化学 { background: #1d7f74; } .s-生物 { background: #4f8a1f; }
+.s-历史 { background: #8a5a12; } .s-地理 { background: #2f7f4a; } .s-政治 { background: #7a1d3a; }
+.dg-name2 { font-size: 32px; font-weight: 900; white-space: nowrap; }
+.dg-ft { font-family: var(--num); font-size: 36px; white-space: nowrap; }
+.dg-ft i { font-style: normal; color: var(--gold-500); margin: 0 6px; font-size: 26px; }
+.dg-ft b { color: var(--red-600); font-weight: 600; }
+.dg-d { font-family: var(--num); font-size: 30px; color: #fff; background: linear-gradient(90deg, var(--gold-500), var(--red-600)); border-radius: 20px; text-align: center; }

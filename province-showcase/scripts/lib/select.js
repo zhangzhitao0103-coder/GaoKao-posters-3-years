@@ -3,7 +3,7 @@ const SUBJECTS = ['语文', '数学', '英语', '物理', '化学', '生物', '�
 
 function selectShowcase(d, caps = {}) {
   const c = {
-    qingbei: 40, otherSchool: 5, total: 11, singlePerSubject: 3, improve: 5, improveText: 3, dailyPerSubject: 3,
+    qingbei: 40, otherSchool: 5, total: 11, singlePerSubject: 3, improve: 5, improveText: 3, dailyPerSubject: 3, dailyPerGroup: 8,
     ...caps,
   };
   const g = d.gaokao;
@@ -86,17 +86,24 @@ function selectShowcase(d, caps = {}) {
   if (maxGain) facts.push({ label: '最高提分', value: maxGain, unit: '分', prefix: '+' });
 
   // 日常提分之星：前三（尽量不同老师）
-  const dailyTop = [];
-  for (const x of dailyRanged) {
-    if (dailyTop.length >= 3) break;
-    if (!dailyTop.some((y) => y.teacher === x.teacher)) dailyTop.push(x);
-  }
+  // 日常提分之星：提分最多的前三（不再按老师区分）
+  const dailyTop = dailyRanged.slice(0, 3);
+
+  // 日常提分按学科组展示（语数英 / 物化生 / 史地政）：有姓名的优先入选，不足再用匿名补位，最后按提分排序
+  const GROUPS = [['语数英', ['语文', '数学', '英语']], ['物化生', ['物理', '化学', '生物']], ['史地政', ['历史', '地理', '政治']]];
+  const dailyGroups = GROUPS.map(([name, subs]) => {
+    const pool = dailyRanged.filter((x) => subs.includes(x.subject) && !dailyTop.includes(x));
+    const picked = [...pool.filter((x) => x.student), ...pool.filter((x) => !x.student)].slice(0, c.dailyPerGroup);
+    picked.sort((a, b) => b.delta - a.delta);
+    return { name, subjects: subs, cases: picked, total: d.daily.filter((x) => subs.includes(x.subject)).length };
+  }).filter((x) => x.cases.length);
 
   return {
     province: d.province,
     stats: d.stats,
     facts,
     dailyTop,
+    dailyGroups,
     champion: g.champion,
     qingbei: { groups: groupBySchool(qbShown), shown: qbShown.length, total: qb.length },
     otherSchool: { groups: groupBySchool(otherShown), shown: otherShown.length, total: others.length },

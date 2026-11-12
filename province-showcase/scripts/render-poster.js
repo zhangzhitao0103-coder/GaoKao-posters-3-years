@@ -150,21 +150,24 @@ function improveBlock(sc) {
 }
 
 function dailyBlock(sc) {
-  if (!sc.daily.subjects.length) return '';
+  if (!sc.dailyGroups.length) return '';
+  const who = (x) => (x.student ? esc(x.student) : '<span class="anon">学员</span>');
   const stars = sc.dailyTop.length >= 2 ? `<div class="stars">${sc.dailyTop.map((x, i) => `
     <div class="starc s${i + 1}">
       <div class="starc-rk">TOP ${i + 1}</div>
       <div class="starc-d"><em>↑</em>${x.delta}<i>分</i></div>
       <div class="starc-ft">${x.from} → <b>${x.to}</b></div>
-      <div class="starc-t">${esc(x.subject)} · ${esc(x.teacher)}老师</div>
+      <div class="starc-t">${esc(x.subject)} · ${x.student ? esc(x.student) : `${esc(sc.province)}学员`}</div>
     </div>`).join('')}</div>` : '';
-  const cards = sc.daily.subjects.map((s) => `
-    <div class="dly">
-      <div class="dly-h"><span class="dly-subj">${s.subject}</span></div>
-      ${s.cases.map((x) => `<div class="dly-row"><span class="dly-t">${esc(x.teacher)}<small>老师</small></span><span class="dly-ft">${x.from}<i>→</i><b>${x.to}</b></span><span class="dly-d">↑${x.delta}</span></div>`).join('')}
+  const groups = sc.dailyGroups.map((g) => `
+    <div class="dg">
+      <div class="dg-h"><span class="dg-name">${[...g.name].join('<i>·</i>')}</span><span class="dg-subs">${g.subjects.join(' / ')}</span></div>
+      <div class="dg-rows">${g.cases.map((x) => `
+        <div class="dg-row"><span class="dg-tag s-${x.subject}">${x.subject[0]}</span><span class="dg-name2">${who(x)}</span><span class="dg-ft">${x.from}<i>→</i><b>${x.to}</b></span><span class="dg-d">↑${x.delta}</span></div>`).join('')}
+      </div>
     </div>`).join('');
-  return `<section class="block">${subHeader('chart', '提分之星', `最高提分 <b>+${sc.dailyTop[0]?.delta || ''}</b> 分`)}${stars}
-    <div class="dly-grid ${sc.daily.subjects.length % 2 ? 'odd' : ''}">${cards}</div>${more(sc.daily.subjects.reduce((a, s) => a + s.cases.length, 0), sc.daily.total)}</section>`;
+  const shown = sc.dailyTop.length + sc.dailyGroups.reduce((a, g) => a + g.cases.length, 0);
+  return `<section class="block">${subHeader('chart', '提分之星')}${stars}<div class="dgs">${groups}</div>${more(shown, sc.daily.total)}</section>`;
 }
 
 function buildHtml(d) {
@@ -202,7 +205,7 @@ function buildHtml(d) {
   <div class="part"><div class="part-no">PART 01</div><h2>高考喜报</h2><div class="part-sub">高考 · ${sc.champion.length ? '状元 · ' : ''}名校 · 高分 · 单科 · 提分</div></div>
   <main class="part-body">${gaokaoBlocks}</main>
 
-  ${daily ? `<div class="part"><div class="part-no">PART 02</div><h2>日常提分喜报</h2><div class="part-sub">各学科 · 各主讲老师 · ${esc(d.province)}学员日常提分</div></div>
+  ${daily ? `<div class="part"><div class="part-no">PART 02</div><h2>日常提分喜报</h2><div class="part-sub">语数英 · 物化生 · 史地政 · ${esc(d.province)}学员日常提分</div></div>
   <main class="part-body">${daily}</main>` : ''}
 
   <footer class="foot">
