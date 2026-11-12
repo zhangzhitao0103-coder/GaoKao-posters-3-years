@@ -26,28 +26,65 @@
 
   // ---------- 骨架 ----------
   const scenesRoot = $('#scenes');
-  const tl = gsap.timeline({ paused: true, defaults: { ease: 'power3.out' } });
+  const main = gsap.timeline({ paused: true, defaults: { ease: 'power3.out' } });
+  let tl = main; // 场景搭建时临时指向该场景自己的子时间轴
   const SCHEDULE = { scenes: [], clips: [], impacts: [], whoosh: [], chimes: [], bursts: [] };
   let T = 0;
+  let sceneNo = 0;
 
   const brand = $('#brand');
   const tag = $('#tag');
-  const setTag = (txt, at) => tl.call(() => { tag.textContent = txt; }, null, at);
   tag.textContent = `${D.province} · 优秀学员荣耀榜`;
   gsap.set([brand, tag, '#prog'], { autoAlpha: 0 });
   gsap.set('#wipe', { xPercent: -160 });
+  // 另外两种转场：左右合幕、金环扩散
+  const stageEl = $('#stage');
+  const curL = el('div', 'curtain cur-l', null, stageEl);
+  const curR = el('div', 'curtain cur-r', null, stageEl);
+  const iris = el('div', 'iris', null, stageEl);
+  gsap.set(curL, { xPercent: -101 });
+  gsap.set(curR, { xPercent: 101 });
+  gsap.set(iris, { xPercent: -50, yPercent: -50, scale: 0, opacity: 0 });
+  function transition(t0, kind) {
+    if (kind === 'curtain') {
+      main.fromTo(curL, { xPercent: -101 }, { xPercent: 0, duration: 0.28, ease: 'power3.in', immediateRender: false }, t0 - 0.28);
+      main.fromTo(curR, { xPercent: 101 }, { xPercent: 0, duration: 0.28, ease: 'power3.in', immediateRender: false }, t0 - 0.28);
+      main.to(curL, { xPercent: -101, duration: 0.4, ease: 'power3.out' }, t0 + 0.06);
+      main.to(curR, { xPercent: 101, duration: 0.4, ease: 'power3.out' }, t0 + 0.06);
+    } else if (kind === 'iris') {
+      main.fromTo(iris, { scale: 0, opacity: 1 }, { scale: 1, opacity: 0, duration: 0.75, ease: 'power2.out', immediateRender: false }, t0 - 0.12);
+    } else {
+      main.fromTo('#wipe', { xPercent: -160 }, { xPercent: 160, duration: 0.7, ease: 'power2.inOut', immediateRender: false }, t0 - 0.35);
+    }
+  }
 
+  /**
+   * dur 为场景内部时长；opts.speed 为播放倍速（实际占用 dur / speed 秒）。
+   * 场景内的动画都按内部时间写，整体提速只需调 speed。
+   */
   function scene(name, dur, build, opts = {}) {
+    const speed = opts.speed || 1;
+    const real = dur / speed;
     const root = el('section', `scene scene-${name}`, null, scenesRoot);
     gsap.set(root, { autoAlpha: 0 });
     const t0 = T;
-    tl.set(root, { autoAlpha: 1 }, t0);
-    // 金色斜向扫光转场
-    if (t0 > 0 && !opts.noWipe) tl.fromTo('#wipe', { xPercent: -160 }, { xPercent: 160, duration: 0.7, ease: 'power2.inOut', immediateRender: false }, t0 - 0.35);
-    build(root, t0, dur);
-    if (!opts.keep) tl.to(root, { autoAlpha: 0, scale: 1.05, duration: 0.3, ease: 'power2.in' }, t0 + dur - 0.3);
-    SCHEDULE.scenes.push({ name, start: t0, end: t0 + dur, chapter: opts.chapter || '' });
-    T += dur;
+    main.set(root, { autoAlpha: 1 }, t0);
+    if (t0 > 0 && !opts.noWipe) transition(t0, opts.transition || ['wipe', 'curtain', 'iris'][sceneNo % 3]);
+    sceneNo += 1;
+    const mark = Object.fromEntries(['clips', 'impacts', 'whoosh', 'chimes', 'bursts'].map((k) => [k, SCHEDULE[k].length]));
+    const sub = gsap.timeline({ defaults: { ease: 'power3.out' } });
+    tl = sub;
+    build(root, 0, dur);
+    tl = main;
+    sub.timeScale(speed);
+    main.add(sub, t0);
+    // 场景内登记的音效/片段时间换算成全片时间
+    const map = (x) => t0 + x / speed;
+    for (const k of ['impacts', 'whoosh', 'chimes', 'bursts']) for (let i = mark[k]; i < SCHEDULE[k].length; i += 1) SCHEDULE[k][i] = map(SCHEDULE[k][i]);
+    for (let i = mark.clips; i < SCHEDULE.clips.length; i += 1) { const c = SCHEDULE.clips[i]; c.start = map(c.start); c.end = map(c.end); }
+    if (!opts.keep) main.to(root, { autoAlpha: 0, scale: 1.05, duration: 0.3, ease: 'power2.in' }, t0 + real - 0.3);
+    SCHEDULE.scenes.push({ name, start: t0, end: t0 + real, chapter: opts.chapter || '' });
+    T += real;
     return root;
   }
   function flash(at, strength = 0.5) {
@@ -65,6 +102,21 @@
     node.textContent = String(from);
     tl.fromTo(node, { innerText: from }, { innerText: to, duration: dur, snap: { innerText: 1 }, ease: 'power2.out', immediateRender: false }, at);
   };
+
+  // ---------- 0. 开头钩子：最强的一个数字先砸出来 ----------
+  scene('hook', 2.3, (root, t0) => {
+    const h = D.hook;
+    el('div', 'hk-prov', esc(D.province), root);
+    el('div', 'hk-num', `<b>${h.value}</b><i>${h.unit}</i>`, root);
+    el('div', 'hk-text', chars(h.text), root);
+    SCHEDULE.impacts.push(t0 + 0.12);
+    tl.from($('.hk-prov', root), { autoAlpha: 0, y: -60, duration: 0.3 }, t0 + 0.05);
+    tl.from($('.hk-num', root), { scale: 5, autoAlpha: 0, duration: 0.28, ease: 'power4.in' }, t0);
+    tl.fromTo('#flash', { opacity: 0.9 }, { opacity: 0, duration: 0.5, immediateRender: false }, t0 + 0.28);
+    tl.fromTo(root, { x: 0 }, { x: 16, duration: 0.045, repeat: 5, yoyo: true, ease: 'none', immediateRender: false }, t0 + 0.28);
+    tl.from(root.querySelectorAll('.hk-text .ch'), { autoAlpha: 0, y: 40, stagger: 0.04, duration: 0.25 }, t0 + 0.55);
+    SCHEDULE.bursts.push(t0 + 0.3);
+  }, { chapter: '开篇' });
 
   // ---------- 1. 片头：3D 省份地图 ----------
   scene('intro', 8.5, (root, t0) => {
@@ -124,7 +176,7 @@
     tl.from(tagline.querySelectorAll('.ch'), { autoAlpha: 0, y: 20, stagger: 0.06, duration: 0.3 }, t0 + 6.3);
     tl.to(tilt, { scale: 2.6, autoAlpha: 0, duration: 0.6, ease: 'power3.in' }, t0 + 7.9);
     SCHEDULE.whoosh.push(t0 + 7.9);
-  }, { chapter: '开篇' });
+  }, { chapter: '开篇', speed: 1.55, transition: 'iris' });
 
   // ---------- 2. 总标题 + 数据 ----------
   scene('title', 6, (root, t0) => {
@@ -146,7 +198,26 @@
       tl.from(s, { y: 120, autoAlpha: 0, rotateX: -60, duration: 0.5 }, t0 + 1.8 + i * 0.15);
       countTo($('b', s), n, t0 + 2.0 + i * 0.15, 1.4);
     });
-  }, { chapter: '开篇', noWipe: true });
+  }, { chapter: '开篇', noWipe: true, speed: 1.3 });
+
+  // ---------- 真实喜报墙 ----------
+  if ((D.wall || []).length >= 9) {
+    scene('wall', 3.4, (root, t0) => {
+      SCHEDULE.whoosh.push(t0);
+      const box = el('div', 'wallbox', null, root);
+      const cols = [0, 1, 2].map((c) => D.wall.filter((_, i) => i % 3 === c));
+      cols.forEach((imgs, c) => {
+        const col = el('div', 'wcol', imgs.concat(imgs).map((u) => `<img src="${u}">`).join(''), box);
+        const up = c % 2 === 0;
+        tl.fromTo(col, { y: up ? -200 : -1500 }, { y: up ? -1500 : -200, duration: 3.4, ease: 'none' }, t0);
+      });
+      tl.from(box, { scale: 1.25, autoAlpha: 0, duration: 0.4 }, t0);
+      el('div', 'wall-shade', null, root);
+      const cap = el('div', 'wall-cap', '<span>真实喜报</span><b>每一张，都是真实学员</b>', root);
+      tl.from(cap, { scale: 0.5, autoAlpha: 0, duration: 0.35, ease: 'back.out(2)' }, t0 + 0.35);
+      SCHEDULE.impacts.push(t0 + 0.4);
+    }, { chapter: '高考喜报', transition: 'curtain' });
+  }
 
   // ---------- 3. 状元榜 ----------
   if (D.sc.champion.length) {
@@ -189,14 +260,15 @@
         });
         SCHEDULE.bursts.push(t0 + 1.2);
       }
-    }, { chapter: '高考喜报' });
+    }, { chapter: '高考喜报', speed: 1.2 });
   }
 
   // ---------- 4. 名校录取榜 ----------
   const schoolPeople = [...D.sc.qingbei.groups, ...D.sc.otherSchool.groups].flatMap((g) => g.people.map((p) => ({ ...p, school: g.school })));
   if (schoolPeople.length) {
     const few = schoolPeople.length <= 6;
-    scene('school', few ? 7 : 8, (root, t0) => {
+    const nPages = D.sc.qingbei.groups.reduce((a, g) => a + Math.ceil(g.people.length / 12), 0) + (D.sc.otherSchool.groups.length ? 1 : 0);
+    scene('school', few ? 7 : 0.8 + nPages * 1.45 + (D.sc.qingbei.groups.length + 1) * 0.25 + 0.5, (root, t0) => {
       SCHEDULE.impacts.push(t0);
       flash(t0);
       header(root, t0, 'PART 01 · 高考喜报', '名校录取榜', '金榜题名 · 圆梦名校');
@@ -213,42 +285,64 @@
         SCHEDULE.bursts.push(t0 + 0.9 + schoolPeople.length * 0.5 + 0.3);
         return;
       }
-      const wrap = el('div', 'school-wrap', null, root);
-      let at = t0 + 0.9;
+      // 每所学校一个镜头：校名印章落下，名字 12 个一批翻页
+      let at = t0 + 0.8;
+      const PER = 12;
+      const pages = [];
       D.sc.qingbei.groups.forEach((g) => {
-        const blk = el('div', 'qb-blk', `<div class="qb-seal">${esc(g.school)}</div><div class="qb-chips">${g.people.map((p) => `<span class="qb-chip">${esc(p.name || '学员')}${p.totalScore ? `<em>${p.totalScore}</em>` : ''}</span>`).join('')}${g.total > g.people.length ? '<span class="qb-chip qb-more">……</span>' : ''}</div>`, wrap);
-        tl.from($('.qb-seal', blk), { scale: 2.4, autoAlpha: 0, duration: 0.35, ease: 'power4.in' }, at);
-        SCHEDULE.chimes.push(at + 0.3);
-        tl.from(blk.querySelectorAll('.qb-chip'), { autoAlpha: 0, y: -50, scale: 0.6, stagger: { each: 0.03, from: 'start' }, duration: 0.35, ease: 'back.out(2)' }, at + 0.3);
-        at += 0.4 + Math.min(g.people.length * 0.03, 1.0) + 0.3;
+        for (let i = 0; i < g.people.length; i += PER) pages.push({ school: g.school, people: g.people.slice(i, i + PER), first: i === 0 });
       });
-      if (D.sc.otherSchool.groups.length) {
-        const os = el('div', 'os-list', D.sc.otherSchool.groups.map((g) => `<div class="os-row"><b>${esc(g.school)}</b><span>${g.people.map((p) => esc(p.name || '学员')).join(' · ')}</span></div>`).join(''), wrap);
-        tl.from(os.querySelectorAll('.os-row'), { x: -700, autoAlpha: 0, stagger: 0.12, duration: 0.45 }, at);
-      }
-      moreLine(root, t0 + 6.2, D.sc.qingbei.total + D.sc.otherSchool.total > D.sc.qingbei.shown + D.sc.otherSchool.shown);
-      tl.fromTo(wrap.querySelectorAll('.qb-chip'), { backgroundPosition: '-150% 0' }, { backgroundPosition: '150% 0', duration: 1.0, stagger: 0.01, ease: 'none', immediateRender: false }, t0 + 5.6);
-    }, { chapter: '高考喜报' });
+      if (D.sc.otherSchool.groups.length) pages.push({ school: '更多名校', others: D.sc.otherSchool.groups });
+      const HOLD = 1.45;
+      pages.forEach((pg, pi) => {
+        const card = el('div', 'sp', `<div class="sp-seal">${esc(pg.school)}</div>${pg.others
+          ? `<div class="sp-os">${pg.others.map((g) => `<div class="os-row"><b>${esc(g.school)}</b><span>${g.people.map((p) => esc(p.name || '学员')).join(' · ')}</span></div>`).join('')}</div>`
+          : `<div class="sp-chips">${pg.people.map((p) => `<span class="sp-chip">${esc(p.name || '学员')}${p.totalScore ? `<em>${p.totalScore}</em>` : ''}</span>`).join('')}</div>`}`, root);
+        const sameAsPrev = pi > 0 && pages[pi - 1].school === pg.school;
+        if (sameAsPrev) tl.from(card, { autoAlpha: 0, duration: 0.15 }, at);
+        else {
+          tl.from(card, { y: 120, autoAlpha: 0, duration: 0.3 }, at);
+          tl.from($('.sp-seal', card), { scale: 2.8, autoAlpha: 0, rotate: -6, duration: 0.3, ease: 'power4.in' }, at + 0.05);
+          SCHEDULE.impacts.push(at + 0.35);
+        }
+        const items = card.querySelectorAll('.sp-chip, .os-row');
+        tl.from(items, { autoAlpha: 0, rotateX: -90, y: -30, stagger: 0.035, duration: 0.3, ease: 'back.out(1.6)' }, at + (sameAsPrev ? 0.05 : 0.3));
+        SCHEDULE.chimes.push(at + 0.3);
+        at += HOLD + (sameAsPrev ? 0 : 0.25);
+        if (pi < pages.length - 1) tl.to(card, { autoAlpha: 0, x: -200, duration: 0.2, ease: 'power2.in' }, at - 0.2);
+      });
+      moreLine(root, at - 0.9, D.sc.qingbei.total + D.sc.otherSchool.total > D.sc.qingbei.shown + D.sc.otherSchool.shown);
+    }, { chapter: '高考喜报', speed: 1.12 });
   }
 
   // ---------- 学员原声 ----------
-  function clipScene(clip, idx, chapter) {
-    if (!clip) return;
-    scene(`clip${idx}`, clip.dur + 0.8, (root, t0) => {
+  function clipScene(cuts, idx, chapter) {
+    if (!cuts || !cuts.length) return;
+    const total = cuts.reduce((a, c) => a + c.dur, 0);
+    scene(`clip${idx}`, total + 0.7, (root, t0) => {
       SCHEDULE.whoosh.push(t0);
       flash(t0, 0.6);
-      const r = clip.rect;
-      el('div', 'clip-cap', `<span class="clip-pill">学员原声</span><div class="clip-who"><b>${esc(clip.name)}</b>${clip.label ? ` · ${esc(clip.label)}` : `${clip.score ? ` · ${clip.score}分` : ''}${clip.school ? ` · ${esc(clip.school)}` : ''}`}</div>`, root);
+      const r = cuts[0].rect;
+      el('div', 'clip-pillbox', '<span class="clip-pill">学员原声</span>', root);
       const frame = el('div', 'clip-frame', '<i class="cf-tl"></i><i class="cf-tr"></i><i class="cf-bl"></i><i class="cf-br"></i>', root);
       Object.assign(frame.style, { left: `${r.x - 14}px`, top: `${r.y - 14}px`, width: `${r.w + 28}px`, height: `${r.h + 28}px` });
       const hole = el('div', 'clip-hole', null, root);
       Object.assign(hole.style, { left: `${r.x}px`, top: `${r.y}px`, width: `${r.w}px`, height: `${r.h}px` });
-      el('div', 'clip-foot', clip.quote ? `“${esc(clip.quote)}”` : '有道领世学员真实分享', root);
-      tl.from(frame, { scale: 0.6, autoAlpha: 0, duration: 0.4 }, t0);
-      tl.from($('.clip-cap', root), { y: -80, autoAlpha: 0, duration: 0.4 }, t0 + 0.1);
-      tl.from($('.clip-foot', root), { y: 40, autoAlpha: 0, duration: 0.4 }, t0 + 0.5);
-      SCHEDULE.clips.push({ ...clip, start: t0 + 0.4, end: t0 + 0.4 + clip.dur });
-    }, { chapter });
+      tl.from(frame, { scale: 0.6, autoAlpha: 0, duration: 0.35 }, t0);
+      let at = t0 + 0.35;
+      cuts.forEach((clip, k) => {
+        const who = el('div', 'clip-who', `<b>${esc(clip.name)}</b>${clip.label ? ` · ${esc(clip.label)}` : `${clip.score ? ` · ${clip.score}分` : ''}${clip.school ? ` · ${esc(clip.school)}` : ''}`}`, root);
+        const foot = el('div', 'clip-foot', clip.quote ? `“${esc(clip.quote)}”` : '有道领世学员真实分享', root);
+        gsap.set([who, foot], { autoAlpha: 0 });
+        tl.set([who, foot], { autoAlpha: 1 }, at);
+        tl.from(who, { y: -30, duration: 0.25 }, at);
+        tl.from(foot, { y: 30, duration: 0.25 }, at);
+        if (k > 0) { flash(at, 0.35); tl.fromTo(frame, { scale: 1.03 }, { scale: 1, duration: 0.25, immediateRender: false }, at); }
+        if (k < cuts.length - 1) tl.set([who, foot], { autoAlpha: 0 }, at + clip.dur);
+        SCHEDULE.clips.push({ ...clip, start: at, end: at + clip.dur });
+        at += clip.dur;
+      });
+    }, { chapter, transition: 'curtain' });
   }
   clipScene(D.clips[0], 1, '高考喜报');
 
@@ -280,7 +374,7 @@
         const m = el('div', 'more', '…… 更多学员未展示', root);
         tl.from(m, { autoAlpha: 0, duration: 0.4 }, t0 + 5.6);
       }
-    }, { chapter: '高考喜报' });
+    }, { chapter: '高考喜报', speed: 1.25 });
   }
 
   // ---------- 6. 单科高分榜 ----------
@@ -289,22 +383,26 @@
       SCHEDULE.impacts.push(t0);
       flash(t0);
       header(root, t0, 'PART 01 · 高考喜报', '单科高分榜', '各科高分 · 全面开花');
-      const grid = el('div', `sg-grid n${D.sc.single.subjects.length}`, null, root);
+      const list = el('div', 'ss-list', null, root);
       D.sc.single.subjects.forEach((s, i) => {
         const top = s.people[0];
         const full = FULL[s.subject] || 100;
-        const hot = top.score >= full * 0.95;
-        const card = el('div', `sg ${hot ? 'hot' : ''}`, `
-          <div class="sg-subj">${s.subject}</div>
-          <div class="sg-score"><b>0</b><small>/${full}</small></div>
-          <div class="sg-name">${esc(top.name || '学员')}</div>
-          ${s.people[1] ? `<div class="sg-2">${esc(s.people[1].name || '学员')} ${s.people[1].score}</div>` : ''}`, grid);
-        tl.from(card, { rotateY: 100, autoAlpha: 0, duration: 0.5, ease: 'back.out(1.4)' }, t0 + 0.9 + i * 0.13);
-        countTo($('.sg-score b', card), top.score, t0 + 1.1 + i * 0.13, 1.0, Math.round(top.score * 0.5));
-        if (hot) tl.fromTo(card, { boxShadow: '0 0 0 4px #edb95a, 0 0 0 0 rgba(255,215,120,0)' }, { boxShadow: '0 0 0 4px #edb95a, 0 0 60px 10px rgba(255,215,120,.85)', duration: 0.4, yoyo: true, repeat: 3, immediateRender: false }, t0 + 2.6 + i * 0.05);
+        const isFull = top.score >= full;
+        const row = el('div', `ss ${isFull ? 'full' : ''}`, `
+          <span class="ss-subj s-${s.subject}">${s.subject}</span>
+          <span class="ss-name">${esc(top.name || '学员')}${s.people[1] ? `<small>${esc(s.people[1].name || '学员')} ${s.people[1].score}</small>` : ''}</span>
+          <span class="ss-score"><b>0</b><small>/${full}</small></span>
+          ${isFull ? '<span class="ss-stamp">满分</span>' : ''}`, list);
+        const at = t0 + 0.85 + i * 0.16;
+        tl.from(row, { x: i % 2 ? 1100 : -1100, duration: 0.45, ease: 'power3.out' }, at);
+        countTo($('.ss-score b', row), top.score, at + 0.2, 0.8, Math.round(top.score * 0.6));
+        if (isFull) {
+          tl.from($('.ss-stamp', row), { scale: 3.2, autoAlpha: 0, rotate: 24, duration: 0.25, ease: 'power4.in' }, at + 1.05);
+          SCHEDULE.impacts.push(at + 1.3);
+        }
       });
-      moreLine(root, t0 + 3.6, D.sc.single.total > D.sc.single.subjects.length);
-    }, { chapter: '高考喜报' });
+      moreLine(root, t0 + 3.8, D.sc.single.total > D.sc.single.subjects.length);
+    }, { chapter: '高考喜报', speed: 1.2 });
   }
 
   function moreLine(root, at, show) {
@@ -353,7 +451,7 @@
         tl.from($('.imp-d', row), { scale: 0, autoAlpha: 0, duration: 0.35, ease: 'back.out(3)' }, at + 0.95);
       });
       moreLine(root, t0 + 5.6, D.sc.improve.total > (top ? 1 : 0) + Math.min(D.sc.improve.bars.length, top ? 4 : 6));
-    }, { chapter: '高考喜报' });
+    }, { chapter: '高考喜报', speed: 1.25, transition: 'iris' });
   }
 
   // ---------- 8. 日常提分喜报（学员 + 语数英/物化生/史地政 三组） ----------
@@ -404,7 +502,7 @@
       });
       const more = el('div', 'more dl-more', '…… 更多学员未展示', root);
       tl.from(more, { autoAlpha: 0, duration: 0.4 }, t0 + 2.4 + starDur + (groups.length - 1) * per + 1.4);
-    }, { chapter: '日常提分' });
+    }, { chapter: '日常提分', speed: 1.18, transition: 'wipe' });
   }
 
   clipScene(D.clips[1], 2, '日常提分');
@@ -426,11 +524,11 @@
     tl.fromTo($('.out-slogan', root), { '--sx': '-200%' }, { '--sx': '200%', duration: 1.6, ease: 'none' }, t0 + 2.2);
     tl.from($('.out-sub', root), { autoAlpha: 0, y: 20, duration: 0.5 }, t0 + 2.0);
     SCHEDULE.bursts.push(t0 + 1.2);
-    tl.to('#fade', { opacity: 1, duration: 0.8 }, t0 + dur - 0.8);
-  }, { keep: true, chapter: '结语' });
+    tl.to('#fade', { opacity: 1, duration: 0.9 }, t0 + dur - 0.9);
+  }, { keep: true, chapter: '结语', speed: 1.15, transition: 'iris' });
 
   SCHEDULE.duration = T;
-  tl.to({}, { duration: 0.01 }, T);
+  main.to({}, { duration: 0.01 }, T);
 
   // ---------- 背景光芒 & 粒子（确定性） ----------
   const rays = $('#rays');
@@ -476,7 +574,7 @@
 
   window.SCHEDULE = SCHEDULE;
   window.seek = (t) => {
-    tl.seek(Math.min(t, tl.duration()), false);
+    main.seek(Math.min(t, main.duration()), false);
     rays.style.transform = `translate(-50%,-50%) rotate(${t * 6}deg)`;
     progFill.style.width = `${Math.min(100, (t / T) * 100)}%`;
     const sc = SCHEDULE.scenes.find((s) => t >= s.start && t < s.end);

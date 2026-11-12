@@ -20,24 +20,39 @@ const fileUrl = (p) => `file://${path.join(ROOT, p)}`;
 function buildData(province) {
   const d = JSON.parse(fs.readFileSync(path.join(ROOT, 'data', 'provinces', `${province}.json`), 'utf8'));
   const meta = META[province] || { tagline: '', highlightCities: [], landmarks: [], universities: [] };
-  const sc = selectShowcase(d, { qingbei: 30, otherSchool: 3, total: 12, improve: 5, dailyPerSubject: 3 });
+  const sc = selectShowcase(d, { qingbei: 36, otherSchool: 5, total: 12, improve: 5, dailyPerSubject: 3 });
   const geo = buildMap(province, meta, 960, 40, 1);
 
   const s = d.stats;
   // 只展示 状元 / 清北录取 / 高考600+ 三项中有数据的，不用其他内容补位
   const stats = [[s.champion, '位', '状元喜报'], [s.qingbei, '人', '清北录取'], [s.high600, '人', '高考 600 分+']];
 
-  const clips = (CLIPS[province] || []).slice(0, 2).map((c) => {
+  // 学员原声：每个时段（slot）可以是一段，也可以是 2–3 段快剪
+  const cut = (c) => {
     const v = d.videos.find((x) => x.id === c.id) || {};
     const file = path.join(ROOT, 'cache', 'clips', `${c.id}.mp4`);
     const [w, h] = execFileSync('ffprobe', ['-v', 'error', '-select_streams', 'v:0', '-show_entries', 'stream=width,height', '-of', 'csv=p=0', file]).toString().trim().split(',').map(Number);
-    const vertical = h > w;
-    const rect = vertical ? { x: 170, y: 400, w: 740, h: 1316 } : { x: 50, y: 720, w: 980, h: 552 };
-    return { id: c.id, file, ss: c.ss, dur: c.dur, rect, label: c.label, quote: c.quote, name: v.name, score: v.score, school: v.school, srcW: w, srcH: h };
-  });
+    const rect = h > w ? { x: 170, y: 400, w: 740, h: 1316 } : { x: 50, y: 720, w: 980, h: 552 };
+    return { id: c.id, file, ss: c.ss, dur: c.dur, rect, label: c.label, quote: c.quote, name: v.name, score: v.score, school: v.school };
+  };
+  const clips = (CLIPS[province] || []).slice(0, 2).map((slot) => (Array.isArray(slot) ? slot : [slot]).map(cut));
+
+  // 真实喜报墙：cache/wall/<省>/ 下的喜报原图
+  const wallDir = path.join(ROOT, 'cache', 'wall', province);
+  const wall = fs.existsSync(wallDir)
+    ? fs.readdirSync(wallDir).filter((f) => /\.(webp|jpg|png)$/.test(f)).sort((a, b) => parseInt(a, 10) - parseInt(b, 10)).map((f) => `file://${path.join(wallDir, f)}`)
+    : [];
+
+  // 开头钩子：选该省最强的一个数字
+  const maxTotal = Math.max(0, ...[...d.gaokao.champion, ...d.gaokao.school, ...d.gaokao.total].map((x) => x.totalScore || 0));
+  let hook;
+  if (s.qingbei >= 5) hook = { value: s.qingbei, unit: '人', text: '考入清华北大' };
+  else if (s.champion) hook = { value: s.champion, unit: '位', text: '高考状元' };
+  else if (maxTotal) hook = { value: maxTotal, unit: '分', text: '高考最高分' };
+  else hook = { value: s.improve + s.daily, unit: '例', text: '提分喜报' };
 
   return {
-    province, meta, sc, stats: stats.filter(([n]) => n > 0).slice(0, 4), stats_raw: s, geo, icons: ICON, clips,
+    province, meta, sc, stats: stats.filter(([n]) => n > 0).slice(0, 4), stats_raw: s, geo, icons: ICON, clips, wall, hook,
     logoWhite: fileUrl('assets/logo-white.png'),
   };
 }
@@ -125,7 +140,7 @@ async function main() {
     whoosh: sched.whoosh,
     chimes: sched.chimes,
     duck: sched.clips.map((c) => [c.start - 0.2, c.end + 0.1]),
-    introEnd: sched.scenes[0].end,
+    introEnd: (sched.scenes.find((x) => x.name === 'title') || sched.scenes[1]).start,
     outroStart: sched.scenes[sched.scenes.length - 1].start,
   };
   fs.writeFileSync(path.join(work, 'cues.json'), JSON.stringify(cues));

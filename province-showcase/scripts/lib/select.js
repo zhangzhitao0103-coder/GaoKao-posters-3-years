@@ -95,7 +95,10 @@ function selectShowcase(d, caps = {}) {
     const pool = dailyRanged.filter((x) => subs.includes(x.subject) && !dailyTop.includes(x));
     const picked = [...pool.filter((x) => x.student), ...pool.filter((x) => !x.student)].slice(0, c.dailyPerGroup);
     picked.sort((a, b) => b.delta - a.delta);
-    return { name, subjects: subs, cases: picked, total: d.daily.filter((x) => subs.includes(x.subject)).length };
+    // 海报用：有姓名的整行展示，匿名案例压缩成小胶囊
+    const named = pool.filter((x) => x.student).slice(0, c.dailyPerGroup);
+    const anon = pool.filter((x) => !x.student).slice(0, named.length >= 6 ? 6 : 9);
+    return { name, subjects: subs, cases: picked, named, anon, total: d.daily.filter((x) => subs.includes(x.subject)).length };
   }).filter((x) => x.cases.length);
 
   return {

@@ -280,3 +280,56 @@ body { font-family: var(--sans); color: #fff; -webkit-font-smoothing: antialiase
 .vg-ft i { font-style: normal; color: var(--gold-500); margin: 0 10px; font-size: 42px; }
 .vg-ft b { color: var(--red-600); }
 .vg-d { font-family: var(--num); font-size: 48px; color: #fff; background: linear-gradient(90deg, var(--gold-500), var(--red-600)); border-radius: 34px; text-align: center; }
+
+/* ================= v3 ================= */
+.curtain { position: absolute; top: 0; width: 50.5%; height: 100%; z-index: 56; pointer-events: none;
+  background: linear-gradient(180deg, #b3141c, #6e0a0e); }
+.cur-l { left: 0; border-right: 10px solid #f8d488; box-shadow: 8px 0 40px rgba(255, 210, 120, .6); }
+.cur-r { right: 0; border-left: 10px solid #f8d488; box-shadow: -8px 0 40px rgba(255, 210, 120, .6); }
+.iris { position: absolute; left: 50%; top: 45%; width: 2600px; height: 2600px; border-radius: 50%; z-index: 55; pointer-events: none;
+  border: 90px solid #f8d488; box-shadow: 0 0 120px 40px rgba(255, 226, 150, .7), inset 0 0 120px 40px rgba(255, 226, 150, .7); }
+/* 钩子 */
+.hk-prov { position: absolute; top: 470px; left: 0; right: 0; text-align: center; font-family: var(--brush); font-size: 150px; letter-spacing: 24px; color: var(--gold-200); text-shadow: 0 6px 0 var(--red-950); }
+.hk-num { position: absolute; top: 640px; left: 0; right: 0; text-align: center; line-height: 1; }
+.hk-num b { font-family: var(--num); font-size: 520px; font-weight: 600; color: transparent; background: var(--gold-grad); -webkit-background-clip: text; background-clip: text; filter: drop-shadow(0 12px 0 var(--red-950)); }
+.hk-num i { font-style: normal; font-family: var(--serif); font-weight: 900; font-size: 130px; color: var(--gold-200); margin-left: 10px; }
+.hk-text { position: absolute; top: 1190px; left: 0; right: 0; text-align: center; font-family: var(--serif); font-weight: 900; font-size: 116px; letter-spacing: 10px; color: #fff; text-shadow: 0 7px 0 var(--red-950), 0 0 50px rgba(255, 200, 120, .6); }
+/* 喜报墙 */
+.wallbox { position: absolute; left: -90px; right: -90px; top: -200px; bottom: -200px; display: flex; gap: 26px; justify-content: center; transform: rotate(-7deg); }
+.wcol { width: 380px; display: flex; flex-direction: column; gap: 26px; }
+.wcol img { width: 380px; border-radius: 18px; border: 5px solid #fff3c8; box-shadow: 0 16px 40px rgba(0, 0, 0, .55); }
+.wall-shade { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 50%, rgba(60, 4, 8, .1) 0%, rgba(60, 4, 8, .72) 100%); }
+.wall-cap { position: absolute; left: 0; right: 0; top: 800px; text-align: center; }
+.wall-cap span { display: inline-block; font-family: var(--serif); font-weight: 900; font-size: 120px; letter-spacing: 16px; color: var(--red-900); background: var(--gold-grad); padding: 10px 70px; border-radius: 26px; box-shadow: 0 0 0 6px rgba(110, 10, 14, .9), 0 20px 60px rgba(0, 0, 0, .6); }
+.wall-cap b { display: block; margin-top: 30px; font-size: 52px; letter-spacing: 8px; color: #fff; text-shadow: 0 4px 16px rgba(0, 0, 0, .9); }
+/* 名校分批 */
+.sp { position: absolute; left: 60px; right: 60px; top: 520px; text-align: center; perspective: 1200px; }
+.sp-seal { display: inline-block; font-family: var(--serif); font-weight: 900; font-size: 120px; letter-spacing: 16px; color: var(--red-900); background: var(--gold-grad); padding: 8px 60px 8px 76px; border-radius: 24px; box-shadow: 0 0 0 6px rgba(110, 10, 14, .9), 0 0 0 10px var(--gold-300), 0 20px 50px rgba(0, 0, 0, .45); }
+.sp-chips { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; margin-top: 54px; }
+.sp-chip { background: rgba(255, 249, 238, .97); border-radius: 20px; padding: 20px 0 16px; font-size: 62px; font-weight: 900; color: var(--ink); line-height: 1.1; box-shadow: 0 0 0 4px var(--gold-400), 0 10px 24px rgba(0, 0, 0, .3); }
+.sp-chip em { display: block; font-style: normal; font-family: var(--num); font-size: 40px; color: var(--red-600); }
+.sp-os { margin-top: 54px; display: flex; flex-direction: column; gap: 22px; text-align: left; }
+.sp-os .os-row { padding: 22px 30px; }
+.sp-os .os-row b { font-size: 52px; }
+.sp-os .os-row span { font-size: 46px; }
+/* 原声快剪 */
+.clip-pillbox { position: absolute; top: 170px; left: 0; right: 0; text-align: center; }
+.scene > .clip-who { position: absolute; top: 262px; left: 0; right: 0; text-align: center; }
+/* 单科横条 */
+.ss-list { position: absolute; left: 50px; right: 50px; top: 500px; display: flex; flex-direction: column; gap: 18px; }
+.ss { position: relative; display: grid; grid-template-columns: 150px 1fr auto; align-items: center; gap: 26px; background: rgba(255, 249, 238, .97); border-radius: 22px; padding: 10px 30px 10px 12px; color: var(--ink); box-shadow: 0 0 0 4px var(--gold-400), 0 10px 24px rgba(0, 0, 0, .3); }
+.ss.full { background: linear-gradient(100deg, #fff6dc, #ffdc8a); box-shadow: 0 0 0 4px #fff3c8, 0 0 50px 6px rgba(255, 215, 120, .8); }
+.ss-subj { font-family: var(--serif); font-weight: 900; font-size: 50px; color: #fff; text-align: center; border-radius: 16px; padding: 16px 0; letter-spacing: 6px; }
+.ss-name { font-size: 54px; font-weight: 900; }
+.ss-name small { font-size: 28px; font-weight: 400; color: var(--ink-2); margin-left: 16px; }
+.ss-score b { font-family: var(--num); font-size: 96px; line-height: 1; color: var(--red-600); }
+.ss-score small { font-family: var(--num); font-size: 30px; color: var(--ink-2); }
+.ss-stamp { position: absolute; right: 250px; top: 50%; margin-top: -42px; width: 150px; height: 84px; border: 5px solid var(--red-600); border-radius: 14px; color: var(--red-600); font-family: var(--serif); font-weight: 900; font-size: 46px; display: grid; place-items: center; transform: rotate(-10deg); letter-spacing: 6px; }
+.sp-chips { gap: 30px; margin-top: 64px; }
+.sp-chip { padding: 40px 0 34px; font-size: 68px; border-radius: 24px; }
+.sp-chip em { font-size: 44px; margin-top: 6px; }
+.ss-list { top: 490px; gap: 14px; }
+.ss { padding: 8px 30px 8px 12px; }
+.ss-subj { padding: 12px 0; font-size: 46px; }
+.ss-score b { font-size: 86px; }
+.ss-name { font-size: 50px; }
