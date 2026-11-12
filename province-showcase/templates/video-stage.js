@@ -356,18 +356,17 @@
     }, { chapter: '高考喜报' });
   }
 
-  // ---------- 8. 日常提分喜报 ----------
-  if (D.sc.daily.subjects.length) {
-    const subs = D.sc.daily.subjects;
-    const pages = [];
-    for (let i = 0; i < subs.length; i += 3) pages.push(subs.slice(i, i + 3));
-    const per = 2.5;
+  // ---------- 8. 日常提分喜报（学员 + 语数英/物化生/史地政 三组） ----------
+  if (D.sc.dailyGroups.length) {
+    const groups = D.sc.dailyGroups;
+    const per = 3.0;
     const stars = D.sc.dailyTop.length >= 2 ? D.sc.dailyTop : [];
     const starDur = stars.length ? 3.4 : 0;
-    scene('daily', 2.4 + starDur + pages.length * per + 0.5, (root, t0) => {
+    const who = (x) => (x.student ? esc(x.student) : '<span class="anon">学员</span>');
+    scene('daily', 2.4 + starDur + groups.length * per + 0.4, (root, t0) => {
       SCHEDULE.impacts.push(t0);
       flash(t0, 0.8);
-      const intro = el('div', 'dl-intro', `<div class="dl-part">PART 02</div><div class="dl-title">${chars('日常提分喜报')}</div><div class="dl-sub">各学科 · 各主讲老师 · ${esc(D.province)}学员日常提分</div>`, root);
+      const intro = el('div', 'dl-intro', `<div class="dl-part">PART 02</div><div class="dl-title">${chars('日常提分喜报')}</div><div class="dl-sub">语数英 · 物化生 · 史地政 · ${esc(D.province)}学员日常提分</div>`, root);
       tl.from($('.dl-part', intro), { autoAlpha: 0, letterSpacing: '50px', duration: 0.5 }, t0 + 0.1);
       tl.from(intro.querySelectorAll('.dl-title .ch'), { y: 120, autoAlpha: 0, stagger: 0.06, duration: 0.45, ease: 'back.out(2)' }, t0 + 0.2);
       tl.from($('.dl-sub', intro), { autoAlpha: 0, y: 20, duration: 0.4 }, t0 + 0.8);
@@ -376,7 +375,7 @@
         const box = el('div', 'stars', '<div class="stars-h">提分之星 TOP 3</div>', root);
         tl.from($('.stars-h', box), { autoAlpha: 0, y: 30, duration: 0.3 }, t0 + 2.4);
         stars.forEach((x, i) => {
-          const c = el('div', `starc s${i + 1}`, `<div class="starc-rk">TOP<b>${i + 1}</b></div><div class="starc-mid"><div class="starc-ft">${x.from}<i>→</i><b>${x.from}</b></div><div class="starc-t">${esc(x.subject)} · ${esc(x.teacher)}老师</div></div><div class="starc-d"><em>↑</em><b>0</b></div>`, box);
+          const c = el('div', `starc s${i + 1}`, `<div class="starc-rk">TOP<b>${i + 1}</b></div><div class="starc-mid"><div class="starc-ft">${x.from}<i>→</i><b>${x.from}</b></div><div class="starc-t">${esc(x.subject)} · ${x.student ? esc(x.student) : `${esc(D.province)}学员`}</div></div><div class="starc-d"><em>↑</em><b>0</b></div>`, box);
           const at = t0 + 2.5 + i * 0.3;
           tl.from(c, { x: i % 2 ? 1100 : -1100, rotate: i % 2 ? 8 : -8, duration: 0.55, ease: 'back.out(1.3)' }, at);
           countTo($('.starc-ft b', c), x.to, at + 0.4, 0.9, x.from);
@@ -386,23 +385,25 @@
         SCHEDULE.bursts.push(t0 + 3.6);
         tl.to(box, { y: -200, autoAlpha: 0, duration: 0.4, ease: 'power2.in' }, t0 + 2.4 + starDur - 0.4);
       }
-      pages.forEach((pg, pi) => {
-        const at = t0 + 2.4 + starDur + pi * per;
-        const box = el('div', 'dl-page', null, root);
-        pg.forEach((s, j) => {
-          const card = el('div', 'dl-card', `<div class="dl-h"><span>${s.subject}</span></div>${s.cases.map((x) => `<div class="dl-row"><span class="dl-t">${esc(x.teacher)}<small>老师</small></span><span class="dl-ft">${x.from}<i>→</i><b>${x.from}</b></span><span class="dl-d">↑${x.delta}</span></div>`).join('')}`, box);
-          tl.from(card, { x: 1100, duration: 0.5, ease: 'power3.out' }, at + j * 0.12);
-          card.querySelectorAll('.dl-row').forEach((row, k) => {
-            const x = s.cases[k];
-            countTo($('.dl-ft b', row), x.to, at + 0.4 + j * 0.12, 0.8, x.from);
-            tl.from($('.dl-d', row), { scale: 0, duration: 0.3, ease: 'back.out(3)' }, at + 1.1 + j * 0.12 + k * 0.08);
-          });
-          if (pi < pages.length - 1) tl.to(card, { x: -1100, duration: 0.45, ease: 'power3.in' }, at + per - 0.45 + j * 0.05);
+      // 每组一屏：组名印章落下，学员行依次滑入，分数滚动
+      groups.forEach((g, gi) => {
+        const at = t0 + 2.4 + starDur + gi * per;
+        const card = el('div', 'vg', `<div class="vg-h"><span class="vg-name">${[...g.name].join('<i>·</i>')}</span><span class="vg-subs">${g.subjects.join(' / ')}</span></div>
+          ${g.cases.map((x) => `<div class="vg-row"><span class="vg-tag s-${x.subject}">${x.subject[0]}</span><span class="vg-who">${who(x)}</span><span class="vg-ft">${x.from}<i>→</i><b>${x.from}</b></span><span class="vg-d">↑${x.delta}</span></div>`).join('')}`, root);
+        tl.from(card, { y: 160, autoAlpha: 0, duration: 0.45 }, at);
+        tl.from($('.vg-name', card), { scale: 2.6, autoAlpha: 0, rotate: -8, duration: 0.35, ease: 'power4.in' }, at + 0.15);
+        card.querySelectorAll('.vg-row').forEach((row, k) => {
+          const x = g.cases[k];
+          tl.from(row, { x: 700, autoAlpha: 0, duration: 0.35 }, at + 0.4 + k * 0.08);
+          countTo($('.vg-ft b', row), x.to, at + 0.5 + k * 0.08, 0.8, x.from);
+          tl.from($('.vg-d', row), { scale: 0, duration: 0.3, ease: 'back.out(3)' }, at + 1.2 + k * 0.08);
         });
+        if (gi < groups.length - 1) tl.to(card, { x: -1100, duration: 0.45, ease: 'power3.in' }, at + per - 0.45);
         SCHEDULE.whoosh.push(at);
+        SCHEDULE.impacts.push(at + 0.5);
       });
       const more = el('div', 'more dl-more', '…… 更多学员未展示', root);
-      tl.from(more, { autoAlpha: 0, duration: 0.4 }, t0 + 2.4 + starDur + (pages.length - 1) * per + 1.2);
+      tl.from(more, { autoAlpha: 0, duration: 0.4 }, t0 + 2.4 + starDur + (groups.length - 1) * per + 1.4);
     }, { chapter: '日常提分' });
   }
 
