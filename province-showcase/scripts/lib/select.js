@@ -80,7 +80,14 @@ function selectShowcase(d, caps = {}) {
   const FULLM = { 语文: 150, 数学: 150, 英语: 150 };
   const allTotals = [...g.champion, ...g.school, ...g.total].map((x) => x.totalScore).filter(Boolean);
   const bestSingle = [...singlePool].sort((a, b) => b.score / (FULLM[b.subject] || 100) - a.score / (FULLM[a.subject] || 100))[0];
-  const dailyRanged = d.daily.filter((x) => x.from != null);
+  // 同一案例可能挂在多位老师/多个学科下重复出现：有姓名按 姓名+起止分 去重，匿名按 学科+起止分 去重
+  const seenDaily = new Set();
+  const dailyRanged = d.daily.filter((x) => x.from != null).filter((x) => {
+    const k = x.student ? `${x.student}|${x.from}|${x.to}` : `|${x.subject}|${x.from}|${x.to}`;
+    if (seenDaily.has(k)) return false;
+    seenDaily.add(k);
+    return true;
+  });
   const facts = [];
   if (allTotals.length) facts.push({ label: '高考最高分', value: Math.max(...allTotals), unit: '分' });
   if (bestSingle) facts.push({ label: `单科最高 · ${bestSingle.subject}`, value: bestSingle.score, unit: '分' });

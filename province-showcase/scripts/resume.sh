@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# 第2批结束后：重做内蒙古、江苏、吉林的原声片段（修正露出姓名/重复片段），再跑第3批
+# 容器重启后续跑：第2批剩余 → 修正内蒙古/江苏/吉林/浙江/湖北 → 第3批
 cd "$(dirname "$0")/.." || exit 1
-until grep -q "ALL DONE" output/batch-2.log; do sleep 30; done
+scripts/batch-video.sh 湖南 广东 广西 海南 > output/batch-2b.log 2>&1
 {
-for p in 内蒙古 江苏 吉林; do
+for p in 内蒙古 江苏 吉林 浙江 湖北; do
   echo "===== 修正 $p $(date +%H:%M:%S)"
   python3 scripts/pick-clips.py "$p" --force
   if node scripts/render-video.js "$p" > "output/render-$p.log" 2>&1; then echo "OK $p"; else echo "FAIL $p"; fi

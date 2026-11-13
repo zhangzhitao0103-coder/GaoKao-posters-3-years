@@ -91,6 +91,9 @@ def segments(v):
         text = s['text']
         if narrated and (s['start'] < 8 or '认识' in text):
             continue
+        # 自我介绍句会念出完整姓名，不用
+        if re.search(r'我是|我叫|大家好', text):
+            continue
         # 太短的句子和下一句合并
         if dur < 1.8 and i + 1 < len(segs) and segs[i + 1]['end'] - s['start'] <= 6:
             text += segs[i + 1]['text']
