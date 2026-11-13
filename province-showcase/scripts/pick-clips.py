@@ -111,7 +111,7 @@ allsegs = [s for v in ready for s in segments(v)]
 
 def pick(key, n=2, avoid=()):
     chosen, used = [], set(avoid)
-    for s in sorted(allsegs, key=lambda s: (-s[key], s['dur'])):
+    for s in sorted(allsegs, key=lambda s: (-s[key], -(s['v'].get('score') or 0), s['dur'])):
         if s[key] <= 0 or len(chosen) >= n:
             break
         who = s['v']['id']
