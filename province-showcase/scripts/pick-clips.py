@@ -52,9 +52,13 @@ def rank(v):
 seen, cands = set(), []
 for v in sorted(videos, key=rank):
     who = v.get('rawName') or v['id']
-    if who in seen:
+    # 同一学员常有多条视频（姓名写法可能不同），再按 分数+院校 去重
+    same = (v.get('score'), v.get('school')) if v.get('score') and v.get('school') else None
+    if who in seen or (same and same in seen):
         continue
     seen.add(who)
+    if same:
+        seen.add(same)
     cands.append(v)
     if len(cands) >= 4:
         break
@@ -80,9 +84,13 @@ UP_RE = re.compile(r'提升|提高|进步|补回|突破|从.{0,6}到|逆袭')
 def segments(v):
     segs = json.loads((CLIPS / f"{v['id']}.json").read_text())
     out = []
+    # 「学员都考去哪了」系列开头是旁白+姓名字卡（会露出完整姓名），跳过旁白部分
+    narrated = bool(segs) and '考去哪' in segs[0]['text']
     for i, s in enumerate(segs):
         dur = s['end'] - s['start']
         text = s['text']
+        if narrated and (s['start'] < 8 or '认识' in text):
+            continue
         # 太短的句子和下一句合并
         if dur < 1.8 and i + 1 < len(segs) and segs[i + 1]['end'] - s['start'] <= 6:
             text += segs[i + 1]['text']
