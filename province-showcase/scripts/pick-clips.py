@@ -78,7 +78,7 @@ for v in cands:
 
 A_RE = re.compile(r'(高考|总分|录取|考入|考上|大学)')
 SCORE_RE = re.compile(r'\d{3}|1[0-4]\d|分')
-THANK_RE = re.compile(r'感谢|谢谢')
+THANK_RE = re.compile(r'感谢')
 UP_RE = re.compile(r'提升|提高|进步|补回|突破|从.{0,6}到|逆袭')
 
 
