@@ -2,11 +2,11 @@
 # 可断点续跑的视频队列：完成一个记一笔（output/queue-done.txt），容器重启后重新执行本脚本即可接着跑
 # 任务格式：省份 或 省份:force（重新挑原声）
 cd "$(dirname "$0")/.." || exit 1
-JOBS="广东 广西 海南 内蒙古:force 江苏:force 吉林:force 浙江:force 湖北:force 重庆 四川 贵州 云南 西藏 陕西 甘肃 青海 宁夏 新疆 山东:redo 安徽:redo 山西:redo 江西:redo 河北:redo 福建:redo 辽宁:redo"
+JOBS="内蒙古:force2 江苏:force2 吉林:force2 浙江:force2 湖北:force2 陕西 甘肃 青海 宁夏 新疆 广西:redo 山东:redo 安徽:redo 山西:redo 江西:redo 河北:redo 福建:redo 辽宁:redo"
 touch output/queue-done.txt
 for job in $JOBS; do
   grep -qx "$job" output/queue-done.txt && continue
-  p="${job%%:*}"; flag=""; [ "${job#*:}" = "force" ] && flag="--force"
+  p="${job%%:*}"; flag=""; case "${job#*:}" in force*) flag="--force";; esac
   echo "===== $job $(date +%H:%M:%S)"
   python3 scripts/pick-clips.py "$p" $flag
   if node scripts/render-video.js "$p" > "output/render-$p.log" 2>&1; then

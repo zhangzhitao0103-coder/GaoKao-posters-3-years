@@ -68,11 +68,12 @@ ready = []
 for v in cands:
     f = CLIPS / f"{v['id']}.mp4"
     j = CLIPS / f"{v['id']}.json"
-    if not j.exists() and not (f.exists() and f.stat().st_size > 100000):
+    # 转写结果有缓存也要把视频下回来（渲染时要用画面）
+    if not (f.exists() and f.stat().st_size > 100000):
         subprocess.run(['curl', '-sSL', '-m', '600', '-o', str(f), v['url'].replace('https:', 'http:')], check=False)
     if not j.exists() and f.exists() and f.stat().st_size > 100000:
         subprocess.run([sys.executable, str(ROOT / 'scripts' / 'transcribe.py'), str(f)], check=False)
-    if j.exists() and f.exists():
+    if j.exists() and f.exists() and f.stat().st_size > 100000:
         ready.append(v)
 
 A_RE = re.compile(r'(高考|总分|录取|考入|考上|大学)')
