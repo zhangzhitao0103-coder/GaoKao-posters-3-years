@@ -15,7 +15,6 @@ function trackEvent(eventName, properties = {}) {
 }
 
 const HONOR_CATEGORY = "优秀学员 & 荣耀榜";
-const HONOR_LINK_LABELS = new Map([["优秀学员", "资料链接"], ["荣耀榜", "视频链接"]]);
 const MATERIALS = [...(window.MATERIALS || []), ...(window.HONOR_MATERIALS || [])];
 const AVAILABLE_YEARS = [...new Set(MATERIALS.map((item) => item.year).filter(Boolean))]
   .sort((a, b) => b.localeCompare(a, "zh-Hans-CN", { numeric: true }));
@@ -125,6 +124,7 @@ const elements = {
   lightboxNext: document.querySelector("#lightboxNext"),
   lightboxCopy: document.querySelector("#lightboxCopy"),
   lightboxResource: document.querySelector("#lightboxResource"),
+  lightboxResourceUrl: document.querySelector("#lightboxResourceUrl"),
   lightboxCopyName: document.querySelector("#lightboxCopyName"),
   lightboxCloseTop: document.querySelector("#lightboxCloseTop"),
   lightboxCloseBottom: document.querySelector("#lightboxCloseBottom"),
@@ -323,6 +323,8 @@ function renderSummary() {
 function createMaterialCard(item, source, sectionItems) {
   const card = document.createElement("article");
   card.className = "material-card";
+  const isHonor = item.category === HONOR_CATEGORY;
+  if (isHonor) card.classList.add("material-card--honor");
   if (item.honorKind) card.dataset.honorKind = item.honorKind;
   card.tabIndex = 0;
   const badges = [item.year, item.province || item.subject, item.honorKind || item.category].filter(Boolean).slice(0, 3);
@@ -335,18 +337,33 @@ function createMaterialCard(item, source, sectionItems) {
     <div class="card-footer">
       <div class="card-text">
         <div class="card-title" title="${escapeHtml(item.title)}">${escapeHtml(item.title)}</div>
-        <div class="card-meta">${escapeHtml(meta)}</div>
+        ${isHonor ? "" : `<div class="card-meta">${escapeHtml(meta)}</div>`}
       </div>
-      <button class="copy-button" type="button" aria-label="复制图片"></button>
+      ${isHonor ? `
+        <div class="honor-copy-actions">
+          <button class="honor-copy-button" type="button" data-copy-image>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="8" width="12" height="12" rx="3"/><path d="M8 8V7a3 3 0 0 1 3-3h6a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3h-1"/></svg>
+            复制图片
+          </button>
+          <button class="honor-copy-button" type="button" data-copy-resource ${item.resourceUrl ? "" : "disabled"}>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m10 13 4-4m-6 2-2 2a4 4 0 0 0 6 6l2-2m2-6 2-2a4 4 0 0 0-6-6l-2 2"/></svg>
+            复制链接
+          </button>
+        </div>
+      ` : '<button class="copy-button" type="button" aria-label="复制图片"></button>'}
     </div>
   `;
   card.addEventListener("click", () => openLightbox(sectionItems, sectionItems.findIndex((entry) => entry.id === item.id), "card"));
   card.addEventListener("keydown", (event) => {
-    if (event.key === "Enter") openLightbox(sectionItems, sectionItems.findIndex((entry) => entry.id === item.id), "card");
+    if (event.key === "Enter" && event.target === card) openLightbox(sectionItems, sectionItems.findIndex((entry) => entry.id === item.id), "card");
   });
-  card.querySelector(".copy-button").addEventListener("click", (event) => {
+  card.querySelector(".copy-button, [data-copy-image]").addEventListener("click", (event) => {
     event.stopPropagation();
     copyImage(item, source);
+  });
+  card.querySelector("[data-copy-resource]")?.addEventListener("click", (event) => {
+    event.stopPropagation();
+    copyResourceLink(item, "链接");
   });
   return card;
 }
@@ -623,9 +640,15 @@ function renderLightbox() {
   elements.lightboxFile.textContent = item.fileName;
   elements.lightboxTags.textContent = (item.tags || []).join(" / ");
   elements.lightboxDownload.href = item.imageUrl;
-  const linkLabel = item.category === HONOR_CATEGORY && HONOR_LINK_LABELS.get(item.honorKind);
-  elements.lightboxResource.hidden = !(item.resourceUrl && linkLabel);
-  elements.lightboxResource.textContent = linkLabel ? `复制${linkLabel}` : "";
+  const isHonor = item.category === HONOR_CATEGORY;
+  const resourceUrl = isHonor ? item.resourceUrl || "" : "";
+  elements.lightboxResource.hidden = !isHonor;
+  elements.lightboxResource.disabled = !resourceUrl;
+  elements.lightboxResourceUrl.hidden = !resourceUrl;
+  elements.lightboxResourceUrl.textContent = resourceUrl;
+  elements.lightboxDownload.hidden = isHonor;
+  elements.lightboxCopyName.hidden = isHonor;
+  elements.lightboxCloseBottom.hidden = isHonor;
   elements.lightboxDownload.download = item.category === "高考状元"
     ? item.fileName.replace(/\.[^.]+$/, ".webp")
     : item.fileName;
@@ -642,6 +665,16 @@ function navigateLightbox(delta) {
   state.lightbox.index = (state.lightbox.index + delta + items.length) % items.length;
   renderLightbox();
   trackEvent("image_clicked", imageProperties(items[state.lightbox.index], "lightbox_navigation"));
+}
+
+async function copyResourceLink(item, label) {
+  if (item?.category !== HONOR_CATEGORY || !item.resourceUrl) return;
+  try {
+    await navigator.clipboard.writeText(item.resourceUrl);
+    showToast(`已复制${label}`);
+  } catch {
+    showToast(`复制${label}失败，请重试`);
+  }
 }
 
 async function copyImage(item, source) {
@@ -760,8 +793,20 @@ function withTimeout(promise, timeoutMs, message) {
 }
 
 async function loadBatchImageAsPngBlob(item) {
-  if (item.copyUrl) return loadImageAsPngBlob(item.copyUrl);
   const isLocalPreview = ["localhost", "127.0.0.1"].includes(window.location.hostname);
+  const copySource = item.copyUrl || item.imageUrl;
+  if (isLocalPreview && item.category === HONOR_CATEGORY && copySource) {
+    const copyPath = new URL(copySource, window.location.href).pathname;
+    const releaseAsset = /^\/honor-board\/([a-f0-9]{20}\.webp)$/.exec(copyPath);
+    if (releaseAsset) {
+      try {
+        return await loadImageAsPngBlob(`/outputs/honor-release/${releaseAsset[1]}`);
+      } catch {
+        return loadImageAsPngBlob(copySource);
+      }
+    }
+  }
+  if (item.copyUrl) return loadImageAsPngBlob(item.copyUrl);
   const primaryUrl = isLocalPreview && item.sourcePath ? item.sourcePath : item.imageUrl;
   const fallbackUrl = primaryUrl === item.imageUrl ? item.sourcePath : item.imageUrl;
   try {
@@ -855,7 +900,7 @@ function bindEvents() {
   });
   elements.lightbox.querySelector(".lightbox__backdrop").addEventListener("click", closeLightbox);
   elements.lightbox.addEventListener("click", (event) => {
-    if (!event.target.closest("img, button, a")) closeLightbox();
+    if (!event.target.closest("img, button, a, #lightboxResourceUrl")) closeLightbox();
   });
   elements.lightboxCloseTop.addEventListener("click", closeLightbox);
   elements.lightboxCloseBottom.addEventListener("click", closeLightbox);
@@ -865,17 +910,8 @@ function bindEvents() {
     const item = state.lightbox.items[state.lightbox.index];
     if (item) copyImage(item, "lightbox");
   });
-  elements.lightboxResource.addEventListener("click", async () => {
-    const item = state.lightbox.items[state.lightbox.index];
-    if (!item?.resourceUrl || item.category !== HONOR_CATEGORY) return;
-    const label = HONOR_LINK_LABELS.get(item.honorKind);
-    if (!label) return;
-    try {
-      await navigator.clipboard.writeText(item.resourceUrl);
-      showToast(`已复制${label}`);
-    } catch {
-      showToast(`复制${label}失败，请重试`);
-    }
+  elements.lightboxResource.addEventListener("click", () => {
+    copyResourceLink(state.lightbox.items[state.lightbox.index], "资料链接");
   });
   elements.lightboxCopyName.addEventListener("click", async () => {
     const item = state.lightbox.items[state.lightbox.index];
