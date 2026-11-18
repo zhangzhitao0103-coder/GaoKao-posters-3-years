@@ -3,7 +3,7 @@ const path = require("path");
 
 const ROOT_DIR = path.resolve(__dirname, "..");
 const DIST_DIR = path.join(ROOT_DIR, "dist");
-const FILES = ["index.html", "styles.css", "app.js", "data.js"];
+const FILES = ["index.html", "styles.css", "app.js", "data.js", "honor-data.js"];
 
 fs.rmSync(DIST_DIR, { recursive: true, force: true });
 fs.mkdirSync(DIST_DIR, { recursive: true });
@@ -17,4 +17,4 @@ for (const file of FILES) {
   fs.copyFileSync(source, target);
 }
 
-console.log(`Built static site in ${path.relative(ROOT_DIR, DIST_DIR)} with ${FILES.length} files.`);
+console.log(`Built static site in ${path.relative(ROOT_DIR, DIST_DIR)}.`);

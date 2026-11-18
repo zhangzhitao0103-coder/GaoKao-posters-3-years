@@ -14,7 +14,9 @@ function trackEvent(eventName, properties = {}) {
   });
 }
 
-const MATERIALS = Array.isArray(window.MATERIALS) ? window.MATERIALS : [];
+const HONOR_CATEGORY = "优秀学员 & 荣耀榜";
+const HONOR_LINK_LABELS = new Map([["优秀学员", "资料链接"], ["荣耀榜", "视频链接"]]);
+const MATERIALS = [...(window.MATERIALS || []), ...(window.HONOR_MATERIALS || [])];
 const AVAILABLE_YEARS = [...new Set(MATERIALS.map((item) => item.year).filter(Boolean))]
   .sort((a, b) => b.localeCompare(a, "zh-Hans-CN", { numeric: true }));
 const ALL = "全部";
@@ -23,13 +25,14 @@ let availableProvinceOptions = [ALL];
 const SUBJECTS = ["全部", "语文", "数学", "英语", "物理", "化学", "生物", "政治", "历史", "地理"];
 const PROVINCE_COLLATOR = new Intl.Collator("zh-Hans-CN-u-co-pinyin", { numeric: true });
 const SECTION_CONFIGS = [
+  { category: HONOR_CATEGORY, key: "honor", elementId: "section-honor", pageSize: 8, gridClass: "grid-4" },
   { category: "高考状元", key: "champions", elementId: "section-champions", pageSize: 6, gridClass: "grid-3" },
   { category: "顶尖名校", key: "top-university", elementId: "section-top-university", pageSize: 6, gridClass: "grid-3" },
   { category: "超高分喜报", key: "ultra-high-score", elementId: "section-ultra-high-score", pageSize: 6, gridClass: "grid-3" },
   { category: "单科高分", key: "single-subject-high-score", elementId: "section-single-subject-high-score", pageSize: 6, gridClass: "grid-3" },
   { category: "高分学员", key: "high-score-student", elementId: "section-high-score-student", pageSize: 6, gridClass: "grid-3" },
   { category: "提分学员", key: "score-improvement", elementId: "section-score-improvement", pageSize: 6, gridClass: "grid-3" },
-  { category: "押题学员反馈", key: "prediction-feedback", elementId: "section-prediction-feedback", pageSize: 8, gridClass: "grid-feedback-row" },
+  { category: "押题学员反馈", key: "prediction-feedback", elementId: "section-prediction-feedback", pageSize: 6, gridClass: "grid-3" },
 ];
 const SCHOOL_PRIORITY = ["清华大学", "北京大学", "复旦大学", "上海交通大学", "浙江大学", "中国人民大学", "香港大学"];
 const EXAM_PROVINCE_GROUPS = [
@@ -121,6 +124,7 @@ const elements = {
   lightboxPrev: document.querySelector("#lightboxPrev"),
   lightboxNext: document.querySelector("#lightboxNext"),
   lightboxCopy: document.querySelector("#lightboxCopy"),
+  lightboxResource: document.querySelector("#lightboxResource"),
   lightboxCopyName: document.querySelector("#lightboxCopyName"),
   lightboxCloseTop: document.querySelector("#lightboxCloseTop"),
   lightboxCloseBottom: document.querySelector("#lightboxCloseBottom"),
@@ -182,7 +186,7 @@ function imageProperties(item, source) {
 
 function getBaseItems() {
   if (state.year === ALL) return MATERIALS;
-  return MATERIALS.filter((item) => item.year === state.year);
+  return MATERIALS.filter((item) => item.year === state.year || item.category === HONOR_CATEGORY);
 }
 
 function matchesSearch(item) {
@@ -202,6 +206,7 @@ function matchesSearch(item) {
 
 function matchesFilters(item, section) {
   if (item.category !== section.category) return false;
+  if (item.category === HONOR_CATEGORY) return state.province === ALL || state.province === item.province;
   if (state.year !== ALL && item.year !== state.year) return false;
   if (item.category === "押题学员反馈") {
     const provinceRank = predictionProvinceMatchRank(item, state.province);
@@ -226,6 +231,7 @@ function compareByFileName(a, b) {
 }
 
 function sortItems(items, category) {
+  if (category === HONOR_CATEGORY) return items;
   return [...items].sort((a, b) => {
     if (category === "高考状元") return (a.championLevel === "province" ? 0 : 1) - (b.championLevel === "province" ? 0 : 1) || compareByFileName(a, b);
     if (category === "顶尖名校") return schoolRank(a) - schoolRank(b) || compareByFileName(a, b);
@@ -317,8 +323,9 @@ function renderSummary() {
 function createMaterialCard(item, source, sectionItems) {
   const card = document.createElement("article");
   card.className = "material-card";
+  if (item.honorKind) card.dataset.honorKind = item.honorKind;
   card.tabIndex = 0;
-  const badges = [item.year, item.province || item.subject, item.category].filter(Boolean).slice(0, 3);
+  const badges = [item.year, item.province || item.subject, item.honorKind || item.category].filter(Boolean).slice(0, 3);
   const meta = [item.year, item.category, item.province || UNKNOWN_PROVINCE, item.subject].filter(Boolean).join("｜");
   card.innerHTML = `
     <div class="thumb-frame">
@@ -562,6 +569,7 @@ function renderViewAllContent() {
   elements.viewAllTitle.textContent = `${state.year === ALL ? "全部年份" : state.year}｜${section.category}｜共 ${items.length} 张`;
   elements.viewAllSubtitle.textContent = `当前筛选：${state.province === ALL ? "全部省份" : state.province}｜${state.subject === ALL ? "全部学科" : state.subject}`;
   elements.viewAllGrid.textContent = "";
+  elements.viewAllGrid.classList.toggle("modal-grid--honor", section.category === HONOR_CATEGORY);
   visibleItems.forEach((item) => elements.viewAllGrid.append(createViewAllCard(item, items)));
   elements.viewAllPageIndicator.textContent = `${state.viewAll.pageIndex + 1} / ${totalPages}`;
   elements.viewAllPrev.disabled = state.viewAll.pageIndex <= 0;
@@ -615,6 +623,9 @@ function renderLightbox() {
   elements.lightboxFile.textContent = item.fileName;
   elements.lightboxTags.textContent = (item.tags || []).join(" / ");
   elements.lightboxDownload.href = item.imageUrl;
+  const linkLabel = item.category === HONOR_CATEGORY && HONOR_LINK_LABELS.get(item.honorKind);
+  elements.lightboxResource.hidden = !(item.resourceUrl && linkLabel);
+  elements.lightboxResource.textContent = linkLabel ? `复制${linkLabel}` : "";
   elements.lightboxDownload.download = item.category === "高考状元"
     ? item.fileName.replace(/\.[^.]+$/, ".webp")
     : item.fileName;
@@ -639,25 +650,33 @@ async function copyImage(item, source) {
     ...imageProperties(item, source),
   };
   trackEvent("image_copy_clicked", props);
+  if (window.location.protocol === "file:") {
+    window.location.assign("http://127.0.0.1:8088/");
+    return;
+  }
   try {
-    const pngBlob = await loadImageAsPngBlob(item.imageUrl);
-    await navigator.clipboard.write([new ClipboardItem({ "image/png": pngBlob })]);
+    if (!navigator.clipboard?.write || !window.ClipboardItem) {
+      throw new Error("当前环境不支持复制图片本体");
+    }
+    await navigator.clipboard.write([
+      new ClipboardItem({ "image/png": loadBatchImageAsPngBlob(item) }),
+    ]);
     showToast("已复制图片");
     trackEvent("image_copy_succeeded", { ...props, copy_type: "image_blob" });
     return;
   } catch (error) {
-    try {
-      await navigator.clipboard.writeText(new URL(item.imageUrl, window.location.href).href);
-      showToast("已复制图片链接");
-      trackEvent("image_copy_succeeded", { ...props, copy_type: "image_url" });
-    } catch (fallbackError) {
-      showToast("复制失败，请打开大图后右键保存");
-      trackEvent("image_copy_failed", { ...props, error_message: fallbackError.message || error.message || "" });
-    }
+    showToast(error.name === "NotAllowedError"
+      ? "浏览器未允许写入剪贴板，请在页面获得焦点后重试"
+      : "无法读取或复制图片，可在大图上右键选择「复制图片」");
+    trackEvent("image_copy_failed", { ...props, error_message: error.message || "" });
   }
 }
 
 async function copySelectedImages() {
+  if (window.location.protocol === "file:") {
+    window.location.assign("http://127.0.0.1:8088/");
+    return;
+  }
   const section = SECTION_CONFIGS.find((entry) => entry.category === state.viewAll.category);
   if (!section) return;
   const selectedItems = getSectionItems(section).filter((item) => state.viewAll.selectedIds.has(item.id));
@@ -710,18 +729,26 @@ async function copySelectedImages() {
 }
 
 function createRichImageClipboardItem(items) {
-  const imageUrls = items.map((item) => new URL(item.imageUrl, window.location.href).href);
+  return new ClipboardItem({ "text/html": buildEmbeddedImageHtml(items) });
+}
+
+async function buildEmbeddedImageHtml(items) {
+  const imageData = [];
+  for (const item of items) {
+    const png = await loadBatchImageAsPngBlob(item);
+    imageData.push(await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = () => reject(reader.error);
+      reader.readAsDataURL(png);
+    }));
+  }
   const imageHtml = items.map((item, index) => `
     <p style="margin:0 0 8px">
-      <img src="${escapeHtml(imageUrls[index])}" alt="${escapeHtml(item.title)}" style="display:block;max-width:100%;height:auto">
+      <img src="${imageData[index]}" alt="${escapeHtml(item.title)}" style="display:block;max-width:100%;height:auto">
     </p>
   `).join("");
-  const html = `<div>${imageHtml}</div>`;
-  const plainText = imageUrls.join("\n");
-  return new ClipboardItem({
-    "text/html": new Blob([html], { type: "text/html" }),
-    "text/plain": new Blob([plainText], { type: "text/plain" }),
-  });
+  return new Blob([`<div>${imageHtml}</div>`], { type: "text/html" });
 }
 
 function withTimeout(promise, timeoutMs, message) {
@@ -733,6 +760,7 @@ function withTimeout(promise, timeoutMs, message) {
 }
 
 async function loadBatchImageAsPngBlob(item) {
+  if (item.copyUrl) return loadImageAsPngBlob(item.copyUrl);
   const isLocalPreview = ["localhost", "127.0.0.1"].includes(window.location.hostname);
   const primaryUrl = isLocalPreview && item.sourcePath ? item.sourcePath : item.imageUrl;
   const fallbackUrl = primaryUrl === item.imageUrl ? item.sourcePath : item.imageUrl;
@@ -754,7 +782,8 @@ async function loadImageAsPngBlob(imageUrl) {
   }
 
   const absoluteUrl = new URL(imageUrl, window.location.href).href;
-  const response = await fetch(absoluteUrl, { cache: "force-cache" });
+  const sameOrigin = new URL(absoluteUrl).origin === window.location.origin;
+  const response = await fetch(absoluteUrl, { cache: sameOrigin ? "default" : "no-store" });
   if (!response.ok) throw new Error(`图片加载失败：${response.status}`);
   const sourceBlob = await response.blob();
   const bitmap = await createImageBitmap(sourceBlob);
@@ -835,6 +864,18 @@ function bindEvents() {
   elements.lightboxCopy.addEventListener("click", () => {
     const item = state.lightbox.items[state.lightbox.index];
     if (item) copyImage(item, "lightbox");
+  });
+  elements.lightboxResource.addEventListener("click", async () => {
+    const item = state.lightbox.items[state.lightbox.index];
+    if (!item?.resourceUrl || item.category !== HONOR_CATEGORY) return;
+    const label = HONOR_LINK_LABELS.get(item.honorKind);
+    if (!label) return;
+    try {
+      await navigator.clipboard.writeText(item.resourceUrl);
+      showToast(`已复制${label}`);
+    } catch {
+      showToast(`复制${label}失败，请重试`);
+    }
   });
   elements.lightboxCopyName.addEventListener("click", async () => {
     const item = state.lightbox.items[state.lightbox.index];
