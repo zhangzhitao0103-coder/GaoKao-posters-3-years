@@ -328,7 +328,7 @@ function createMaterialCard(item, source, sectionItems) {
   if (item.honorKind) card.dataset.honorKind = item.honorKind;
   card.tabIndex = 0;
   const badges = [item.year, item.province || item.subject, item.honorKind || item.category].filter(Boolean).slice(0, 3);
-  const meta = [item.year, item.category, item.province || UNKNOWN_PROVINCE, item.subject].filter(Boolean).join("｜");
+  const meta = [item.year, item.category, item.province || item.paperType || UNKNOWN_PROVINCE, item.subject].filter(Boolean).join("｜");
   card.innerHTML = `
     <div class="thumb-frame">
       <img src="${item.thumbUrl}" alt="${escapeHtml(item.title)}" loading="lazy" decoding="async" />

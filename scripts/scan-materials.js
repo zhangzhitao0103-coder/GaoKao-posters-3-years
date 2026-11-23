@@ -47,6 +47,17 @@ const PROVINCES = [
   "全国"
 ];
 
+const PAPER_TYPES = [
+  "新高考一卷",
+  "新高考二卷",
+  "全国甲卷",
+  "全国乙卷",
+  "陕晋青宁卷",
+  "黑吉辽蒙卷",
+  "黑吉辽蒙",
+  "全国卷"
+];
+
 const CONTENT_TYPE_MAP = {
   高考状元: "gaokao_champion",
   单科高分: "single_subject_high_score",
@@ -114,8 +125,9 @@ function getPathInfo(filePath) {
   const year = (yearFromCategory && yearFromCategory[1]) || (yearFromName && yearFromName[1]) || yearFromPath || null;
   const subject = findKnownValue(compact, SUBJECTS);
   const province = category === "高考状元" ? PROVINCES.find((p) => rawName.startsWith(p)) || null : findProvince(segments, rawName);
+  const paperType = category === "押题学员反馈" ? findKnownValue(rawName, PAPER_TYPES) : null;
 
-  return { relativePath, segments, rawName, category, year, subject, province };
+  return { relativePath, segments, rawName, category, year, subject, province, paperType };
 }
 
 function numberAfter(pattern, text) {
@@ -244,6 +256,7 @@ function parseMaterial(filePath, index) {
     content_type: CONTENT_TYPE_MAP[info.category],
     subject: info.subject,
     province: info.province,
+    paperType: info.paperType,
     score,
     totalScore,
     school,
@@ -275,6 +288,7 @@ function parseMaterial(filePath, index) {
     item.category,
     item.subject,
     item.province,
+    item.paperType,
     item.school,
     item.studentName,
     item.score ? `${item.score}分` : null,
@@ -290,6 +304,7 @@ function parseMaterial(filePath, index) {
     item.category,
     item.subject,
     item.province,
+    item.paperType,
     item.school,
     item.studentName,
     item.score,
