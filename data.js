@@ -149917,13 +149917,13 @@ window.MATERIALS = [
     "subject": null,
     "province": "江苏",
     "score": null,
-    "totalScore": 678528,
+    "totalScore": 678,
     "school": null,
     "studentName": "刘XX君",
-    "title": "刘XX君｜江苏｜678528分",
-    "fileName": "2026_江苏_678528_刘XX君.png",
-    "rawName": "2026_江苏_678528_刘XX君",
-    "sourcePath": "./2026/2026_%E8%B6%85%E9%AB%98%E5%88%86%E5%96%9C%E6%8A%A5/2026_%E6%B1%9F%E8%8B%8F/2026_%E6%B1%9F%E8%8B%8F_678528_%E5%88%98XX%E5%90%9B.png",
+    "title": "刘XX君｜江苏｜678分",
+    "fileName": "2026_江苏_678_刘XX君.png",
+    "rawName": "2026_江苏_678_刘XX君",
+    "sourcePath": "./2026/2026_%E8%B6%85%E9%AB%98%E5%88%86%E5%96%9C%E6%8A%A5/2026_%E6%B1%9F%E8%8B%8F/2026_%E6%B1%9F%E8%8B%8F_678_%E5%88%98XX%E5%90%9B.png",
     "thumbUrl": "https://pub-ceb3a66b5d2b48a1b9138364de4f3495.r2.dev/thumbs/2026_%E8%B6%85%E9%AB%98%E5%88%86%E5%96%9C%E6%8A%A5_%E6%B1%9F%E8%8B%8F_2026-f01015dadbd8_757b5d19a3.webp",
     "previewUrl": "https://pub-ceb3a66b5d2b48a1b9138364de4f3495.r2.dev/previews/2026_%E8%B6%85%E9%AB%98%E5%88%86%E5%96%9C%E6%8A%A5_%E6%B1%9F%E8%8B%8F_2026-f01015dadbd8_757b5d19a3.webp",
     "imageUrl": "https://pub-ceb3a66b5d2b48a1b9138364de4f3495.r2.dev/originals/2026_%E8%B6%85%E9%AB%98%E5%88%86%E5%96%9C%E6%8A%A5_%E6%B1%9F%E8%8B%8F_2026-f01015dadbd8_757b5d19a3.png",
@@ -149932,9 +149932,9 @@ window.MATERIALS = [
       "超高分喜报",
       "江苏",
       "刘XX君",
-      "总分678528"
+      "总分678"
     ],
-    "searchableText": "刘XX君｜江苏｜678528分 2026_江苏_678528_刘XX君.png 2026_江苏_678528_刘XX君 2026 超高分喜报 江苏 刘XX君 678528 2026 超高分喜报 江苏 刘XX君 总分678528",
+    "searchableText": "刘XX君｜江苏｜678分 2026_江苏_678_刘XX君.png 2026_江苏_678_刘XX君 2026 超高分喜报 江苏 刘XX君 678 2026 超高分喜报 江苏 刘XX君 总分678",
     "improvementScore": null,
     "feedbackIndex": null,
     "sortIndex": 5043
@@ -247687,12 +247687,14 @@ window.MATERIALS = [
     "tags": [
       "2025",
       "押题学员反馈",
-      "物理"
+      "物理",
+      "陕晋青宁卷"
     ],
-    "searchableText": "25｜物理｜陕晋青宁卷 2025_物理_陕晋青宁卷_1.png 2025_物理_陕晋青宁卷_1 2025 押题学员反馈 物理 2025 押题学员反馈 物理",
+    "searchableText": "25｜物理｜陕晋青宁卷 2025_物理_陕晋青宁卷_1.png 2025_物理_陕晋青宁卷_1 2025 押题学员反馈 物理 陕晋青宁卷 2025 押题学员反馈 物理 陕晋青宁卷",
     "improvementScore": null,
     "feedbackIndex": 1,
-    "sortIndex": 4237
+    "sortIndex": 4237,
+    "paperType": "陕晋青宁卷"
   },
   {
     "id": "2026-9e41d893dae7",
@@ -247889,12 +247891,14 @@ window.MATERIALS = [
     "tags": [
       "2026",
       "押题学员反馈",
-      "地理"
+      "地理",
+      "黑吉辽蒙卷"
     ],
-    "searchableText": "26｜地理｜黑吉辽蒙卷 2026_地理_黑吉辽蒙卷_1.png 2026_地理_黑吉辽蒙卷_1 2026 押题学员反馈 地理 2026 押题学员反馈 地理",
+    "searchableText": "26｜地理｜黑吉辽蒙卷 2026_地理_黑吉辽蒙卷_1.png 2026_地理_黑吉辽蒙卷_1 2026 押题学员反馈 地理 黑吉辽蒙卷 2026 押题学员反馈 地理 黑吉辽蒙卷",
     "improvementScore": null,
     "feedbackIndex": 1,
-    "sortIndex": 6915
+    "sortIndex": 6915,
+    "paperType": "黑吉辽蒙卷"
   },
   {
     "id": "2026-1e3faf88ce2b",
@@ -247917,12 +247921,14 @@ window.MATERIALS = [
     "tags": [
       "2026",
       "押题学员反馈",
-      "地理"
+      "地理",
+      "黑吉辽蒙卷"
     ],
-    "searchableText": "26｜地理｜黑吉辽蒙卷 2026_地理_黑吉辽蒙卷_2.png 2026_地理_黑吉辽蒙卷_2 2026 押题学员反馈 地理 2026 押题学员反馈 地理",
+    "searchableText": "26｜地理｜黑吉辽蒙卷 2026_地理_黑吉辽蒙卷_2.png 2026_地理_黑吉辽蒙卷_2 2026 押题学员反馈 地理 黑吉辽蒙卷 2026 押题学员反馈 地理 黑吉辽蒙卷",
     "improvementScore": null,
     "feedbackIndex": 2,
-    "sortIndex": 6916
+    "sortIndex": 6916,
+    "paperType": "黑吉辽蒙卷"
   },
   {
     "id": "2026-58c933c40253",
@@ -247945,12 +247951,14 @@ window.MATERIALS = [
     "tags": [
       "2026",
       "押题学员反馈",
-      "地理"
+      "地理",
+      "黑吉辽蒙卷"
     ],
-    "searchableText": "26｜地理｜黑吉辽蒙卷 2026_地理_黑吉辽蒙卷_3.png 2026_地理_黑吉辽蒙卷_3 2026 押题学员反馈 地理 2026 押题学员反馈 地理",
+    "searchableText": "26｜地理｜黑吉辽蒙卷 2026_地理_黑吉辽蒙卷_3.png 2026_地理_黑吉辽蒙卷_3 2026 押题学员反馈 地理 黑吉辽蒙卷 2026 押题学员反馈 地理 黑吉辽蒙卷",
     "improvementScore": null,
     "feedbackIndex": 3,
-    "sortIndex": 6917
+    "sortIndex": 6917,
+    "paperType": "黑吉辽蒙卷"
   },
   {
     "id": "2026-6ecf254e72bf",
@@ -248669,12 +248677,14 @@ window.MATERIALS = [
     "tags": [
       "2026",
       "押题学员反馈",
-      "化学"
+      "化学",
+      "黑吉辽蒙卷"
     ],
-    "searchableText": "26｜化学｜黑吉辽蒙卷 2026_化学_黑吉辽蒙卷_1.png 2026_化学_黑吉辽蒙卷_1 2026 押题学员反馈 化学 2026 押题学员反馈 化学",
+    "searchableText": "26｜化学｜黑吉辽蒙卷 2026_化学_黑吉辽蒙卷_1.png 2026_化学_黑吉辽蒙卷_1 2026 押题学员反馈 化学 黑吉辽蒙卷 2026 押题学员反馈 化学 黑吉辽蒙卷",
     "improvementScore": null,
     "feedbackIndex": 1,
-    "sortIndex": 7141
+    "sortIndex": 7141,
+    "paperType": "黑吉辽蒙卷"
   },
   {
     "id": "2026-1fbcbf9a6239",
@@ -248697,12 +248707,14 @@ window.MATERIALS = [
     "tags": [
       "2026",
       "押题学员反馈",
-      "化学"
+      "化学",
+      "黑吉辽蒙卷"
     ],
-    "searchableText": "26｜化学｜黑吉辽蒙卷 2026_化学_黑吉辽蒙卷_2.png 2026_化学_黑吉辽蒙卷_2 2026 押题学员反馈 化学 2026 押题学员反馈 化学",
+    "searchableText": "26｜化学｜黑吉辽蒙卷 2026_化学_黑吉辽蒙卷_2.png 2026_化学_黑吉辽蒙卷_2 2026 押题学员反馈 化学 黑吉辽蒙卷 2026 押题学员反馈 化学 黑吉辽蒙卷",
     "improvementScore": null,
     "feedbackIndex": 2,
-    "sortIndex": 7142
+    "sortIndex": 7142,
+    "paperType": "黑吉辽蒙卷"
   },
   {
     "id": "2026-1e18530ea056",
@@ -248725,12 +248737,14 @@ window.MATERIALS = [
     "tags": [
       "2026",
       "押题学员反馈",
-      "化学"
+      "化学",
+      "黑吉辽蒙卷"
     ],
-    "searchableText": "26｜化学｜黑吉辽蒙卷 2026_化学_黑吉辽蒙卷_3.png 2026_化学_黑吉辽蒙卷_3 2026 押题学员反馈 化学 2026 押题学员反馈 化学",
+    "searchableText": "26｜化学｜黑吉辽蒙卷 2026_化学_黑吉辽蒙卷_3.png 2026_化学_黑吉辽蒙卷_3 2026 押题学员反馈 化学 黑吉辽蒙卷 2026 押题学员反馈 化学 黑吉辽蒙卷",
     "improvementScore": null,
     "feedbackIndex": 3,
-    "sortIndex": 7143
+    "sortIndex": 7143,
+    "paperType": "黑吉辽蒙卷"
   },
   {
     "id": "2026-396ecd417aa9",
@@ -248753,12 +248767,14 @@ window.MATERIALS = [
     "tags": [
       "2026",
       "押题学员反馈",
-      "化学"
+      "化学",
+      "黑吉辽蒙卷"
     ],
-    "searchableText": "26｜化学｜黑吉辽蒙卷 2026_化学_黑吉辽蒙卷_4.png 2026_化学_黑吉辽蒙卷_4 2026 押题学员反馈 化学 2026 押题学员反馈 化学",
+    "searchableText": "26｜化学｜黑吉辽蒙卷 2026_化学_黑吉辽蒙卷_4.png 2026_化学_黑吉辽蒙卷_4 2026 押题学员反馈 化学 黑吉辽蒙卷 2026 押题学员反馈 化学 黑吉辽蒙卷",
     "improvementScore": null,
     "feedbackIndex": 4,
-    "sortIndex": 7144
+    "sortIndex": 7144,
+    "paperType": "黑吉辽蒙卷"
   },
   {
     "id": "2026-b954b2233763",
@@ -249158,12 +249174,14 @@ window.MATERIALS = [
     "tags": [
       "2026",
       "押题学员反馈",
-      "化学"
+      "化学",
+      "陕晋青宁卷"
     ],
-    "searchableText": "26｜化学｜陕晋青宁卷 2026_化学_陕晋青宁卷_1.png 2026_化学_陕晋青宁卷_1 2026 押题学员反馈 化学 2026 押题学员反馈 化学",
+    "searchableText": "26｜化学｜陕晋青宁卷 2026_化学_陕晋青宁卷_1.png 2026_化学_陕晋青宁卷_1 2026 押题学员反馈 化学 陕晋青宁卷 2026 押题学员反馈 化学 陕晋青宁卷",
     "improvementScore": null,
     "feedbackIndex": 1,
-    "sortIndex": 7268
+    "sortIndex": 7268,
+    "paperType": "陕晋青宁卷"
   },
   {
     "id": "2026-7782339d9531",
@@ -249186,12 +249204,14 @@ window.MATERIALS = [
     "tags": [
       "2026",
       "押题学员反馈",
-      "化学"
+      "化学",
+      "陕晋青宁卷"
     ],
-    "searchableText": "26｜化学｜陕晋青宁卷 2026_化学_陕晋青宁卷_2.png 2026_化学_陕晋青宁卷_2 2026 押题学员反馈 化学 2026 押题学员反馈 化学",
+    "searchableText": "26｜化学｜陕晋青宁卷 2026_化学_陕晋青宁卷_2.png 2026_化学_陕晋青宁卷_2 2026 押题学员反馈 化学 陕晋青宁卷 2026 押题学员反馈 化学 陕晋青宁卷",
     "improvementScore": null,
     "feedbackIndex": 2,
-    "sortIndex": 7269
+    "sortIndex": 7269,
+    "paperType": "陕晋青宁卷"
   },
   {
     "id": "2026-0860c122edc8",
@@ -249823,12 +249843,14 @@ window.MATERIALS = [
     "tags": [
       "2026",
       "押题学员反馈",
-      "物理"
+      "物理",
+      "黑吉辽蒙卷"
     ],
-    "searchableText": "26｜物理｜黑吉辽蒙 2026_物理_黑吉辽蒙_2.png 2026_物理_黑吉辽蒙_2 2026 押题学员反馈 物理 2026 押题学员反馈 物理",
+    "searchableText": "26｜物理｜黑吉辽蒙 2026_物理_黑吉辽蒙_2.png 2026_物理_黑吉辽蒙_2 2026 押题学员反馈 物理 黑吉辽蒙卷 2026 押题学员反馈 物理 黑吉辽蒙卷",
     "improvementScore": null,
     "feedbackIndex": 2,
-    "sortIndex": 7910
+    "sortIndex": 7910,
+    "paperType": "黑吉辽蒙卷"
   },
   {
     "id": "2026-c9c60b4d29e2",
@@ -250257,12 +250279,14 @@ window.MATERIALS = [
     "tags": [
       "2026",
       "押题学员反馈",
-      "英语"
+      "英语",
+      "新高考二卷"
     ],
-    "searchableText": "26｜英语｜新高考二卷 2026_英语_新高考二卷_1.jpeg 2026_英语_新高考二卷_1 2026 押题学员反馈 英语 2026 押题学员反馈 英语",
+    "searchableText": "26｜英语｜新高考二卷 2026_英语_新高考二卷_1.jpeg 2026_英语_新高考二卷_1 2026 押题学员反馈 英语 新高考二卷 2026 押题学员反馈 英语 新高考二卷",
     "improvementScore": null,
     "feedbackIndex": 1,
-    "sortIndex": 8014
+    "sortIndex": 8014,
+    "paperType": "新高考二卷"
   },
   {
     "id": "2026-f43aa41ab01f",
@@ -250285,12 +250309,14 @@ window.MATERIALS = [
     "tags": [
       "2026",
       "押题学员反馈",
-      "英语"
+      "英语",
+      "新高考一卷"
     ],
-    "searchableText": "26｜英语｜新高考一卷 2026_英语_新高考一卷_1.jpeg 2026_英语_新高考一卷_1 2026 押题学员反馈 英语 2026 押题学员反馈 英语",
+    "searchableText": "26｜英语｜新高考一卷 2026_英语_新高考一卷_1.jpeg 2026_英语_新高考一卷_1 2026 押题学员反馈 英语 新高考一卷 2026 押题学员反馈 英语 新高考一卷",
     "improvementScore": null,
     "feedbackIndex": 1,
-    "sortIndex": 8015
+    "sortIndex": 8015,
+    "paperType": "新高考一卷"
   },
   {
     "id": "2026-3319e373621e",
@@ -250400,12 +250426,14 @@ window.MATERIALS = [
     "tags": [
       "2026",
       "押题学员反馈",
-      "政治"
+      "政治",
+      "陕晋青宁卷"
     ],
-    "searchableText": "26｜政治｜陕晋青宁 2026_政治_陕晋青宁_1.png 2026_政治_陕晋青宁_1 2026 押题学员反馈 政治 2026 押题学员反馈 政治",
+    "searchableText": "26｜政治｜陕晋青宁 2026_政治_陕晋青宁_1.png 2026_政治_陕晋青宁_1 2026 押题学员反馈 政治 陕晋青宁卷 2026 押题学员反馈 政治 陕晋青宁卷",
     "improvementScore": null,
     "feedbackIndex": 1,
-    "sortIndex": 8414
+    "sortIndex": 8414,
+    "paperType": "陕晋青宁卷"
   },
   {
     "id": "2026-76b1f2e21d67",
